@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 
 export default function About() {
-  const stagger = {
+  const stagger: Variants = {
     animate: {
       transition: {
         staggerChildren: 0.2
@@ -9,9 +10,9 @@ export default function About() {
     }
   };
 
-  const fadeInUp = {
+  const fadeInUp: Variants = {
     initial: { opacity: 0, y: 30 },
-    animate: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+    animate: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
   };
 
   return (
