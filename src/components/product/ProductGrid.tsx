@@ -18,7 +18,7 @@ export default function ProductGrid({ products, isCarouselOnMobile = false, badg
   }
 
   const gridClasses = isCarouselOnMobile 
-    ? "flex md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8 overflow-x-auto snap-x hide-scrollbar pb-6 md:pb-0" 
+    ? "flex md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-6 md:pb-0" 
     : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8";
 
   return (

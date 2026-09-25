@@ -57,7 +57,7 @@ export default function CategoryScroller() {
       </div>
 
       <div className="w-full px-4 md:px-12 pb-2">
-        <div className="flex flex-row lg:grid lg:grid-cols-8 gap-4 lg:gap-3 xl:gap-4 overflow-x-auto lg:overflow-x-visible snap-x hide-scrollbar pb-6 lg:pb-4 px-2 lg:px-0">
+        <div className="flex flex-row lg:grid lg:grid-cols-8 gap-4 lg:gap-3 xl:gap-4 overflow-x-auto lg:overflow-x-visible snap-x snap-mandatory hide-scrollbar pb-6 lg:pb-4 px-2 lg:px-0">
           {loading ? (
             <div className="p-8 col-span-full text-center">Loading categories...</div>
           ) : (

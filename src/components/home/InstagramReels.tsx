@@ -116,7 +116,7 @@ export default function InstagramReels() {
           </motion.div>
         </div>
 
-        <div className="flex gap-4 md:gap-8 overflow-x-auto hide-scrollbar pb-8 snap-x">
+        <div className="flex gap-4 md:gap-8 overflow-x-auto hide-scrollbar pb-8 snap-x snap-mandatory">
           {reels.map((reel, index) => {
             const isVideo = reel.instagram_url.includes('supabase.co') || reel.instagram_url.endsWith('.mp4');
             const displayClass = index >= 6 ? 'hidden md:block' : 'block';
@@ -124,7 +124,7 @@ export default function InstagramReels() {
             return (
               <div 
                 key={reel.id}
-                className={`flex-none w-[280px] md:w-[320px] aspect-[9/16] bg-plum-950 rounded-2xl overflow-hidden relative snap-center shadow-xl border border-white/10 group ${displayClass}`}
+                className={`flex-none w-[180px] md:w-[320px] aspect-[9/16] bg-plum-950 rounded-2xl overflow-hidden relative snap-center shadow-xl border border-white/10 group ${displayClass}`}
               >
                 {isVideo ? (
                   <VideoPlayer reel={reel} playingId={playingId} setPlayingId={setPlayingId} />
