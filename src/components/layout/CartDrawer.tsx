@@ -177,10 +177,62 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       );
                     })}
                   </AnimatePresence>
+
+                  {/* Available Offers Section */}
+                  <div className="mt-4 p-4 bg-white rounded-[1.5rem] border border-lavender-100/50 shadow-sm flex-shrink-0">
+                    <h4 className="font-bold text-plum-950 text-sm mb-3 flex items-center gap-2 uppercase tracking-widest">
+                      <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                      </svg>
+                      Available Offers
+                    </h4>
+                    <div className="flex flex-col gap-2.5">
+                      {[
+                        { code: 'CHOCO30', desc: '30% off on orders above Rs. 2999', min: 2999 },
+                        { code: 'CHOCO20', desc: '20% off on orders above Rs. 1999', min: 1999 },
+                        { code: 'CHOCO10', desc: '10% off on orders above Rs. 999', min: 999 },
+                        { code: 'Welcome10', desc: '10% discount on your first order', min: 0 },
+                      ].map(offer => {
+                        const isApplied = appliedCode === offer.code;
+                        const isLocked = totalPrice < offer.min && offer.code !== 'Welcome10';
+                        const amountNeeded = offer.min - totalPrice;
+                        
+                        return (
+                          <div key={offer.code} className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all ${isApplied ? 'bg-green-50/50 border-green-200 shadow-sm' : 'bg-slate-50 border-lavender-50'}`}>
+                            <div className="flex-1">
+                              <div className="font-bold text-sm flex items-center gap-2 text-plum-950">
+                                <span className={isApplied ? 'text-green-700' : ''}>{offer.code}</span>
+                                {isApplied && (
+                                  <span className="text-[9px] bg-green-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">Auto-Applied</span>
+                                )}
+                              </div>
+                              <div className={`text-[11px] mt-1 font-medium ${isApplied ? 'text-green-600/80' : 'text-plum-900/60'}`}>
+                                {offer.desc}
+                              </div>
+                              {isLocked && (
+                                <div className="text-[10px] text-primary/80 font-bold mt-1.5 flex items-center gap-1">
+                                  Add Rs. {amountNeeded.toLocaleString()} more to unlock
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-shrink-0 ml-3">
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${isApplied ? 'border-green-500 bg-green-500 text-white' : 'border-lavender-200 text-transparent'}`}>
+                                {isApplied && (
+                                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 md:p-8 bg-white border-t border-lavender-50 shadow-[0_-10px_30px_rgb(0,0,0,0.03)] relative z-10">
+                <div className="p-6 md:p-8 bg-white border-t border-lavender-50 shadow-[0_-10px_30px_rgb(0,0,0,0.03)] relative z-10 flex-shrink-0">
                   <div className="flex flex-col gap-2 mb-4">
                     <div className="flex items-center justify-between">
                       <span className="text-plum-900/60 font-bold uppercase tracking-widest text-xs">Subtotal</span>
