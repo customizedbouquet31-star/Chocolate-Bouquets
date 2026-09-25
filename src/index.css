@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Durer';
+  src: url('/fonts/durer.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Argesta';
+  src: url('/fonts/argestadisplay-regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Rude';
+  src: url('/fonts/rude.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@theme {
+  --color-lavender-50: #f8f4ff; /* Slightly richer lavender tint for backgrounds */
+  --color-lavender-100: #f0e6ff;
+  --color-lavender-200: #eadeff;
+  --color-lavender-300: #d6bfff;
+  --color-lavender-400: #bd95ff;
+  --color-lavender-500: #a366ff;
+  --color-lavender-600: #8c3bfe;
+  --color-lavender-700: #7b22ea;
+  --color-lavender-800: #681fbf;
+  --color-lavender-900: #571c9c;
+  
+  --color-plum-900: #2a1b38;
+  --color-plum-950: #1a0f2e;
+
+  --color-primary: var(--color-lavender-500); /* Softer primary */
+  --color-primary-hover: var(--color-lavender-600);
+
+  --font-sans: 'Argesta', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Durer', 'Playfair Display', Georgia, serif;
+  --font-mono: 'Rude', sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: var(--color-lavender-50);
+    --foreground: var(--color-plum-900);
+  }
+  
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--foreground);
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(200%) skewX(-12deg);
+    }
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
