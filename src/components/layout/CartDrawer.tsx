@@ -1,4 +1,5 @@
-import { X, ShoppingBag, Minus, Plus, Trash2, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { X, ShoppingBag, Minus, Plus, Trash2, ArrowRight, MapPin, ChevronLeft } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,6 +12,11 @@ interface CartDrawerProps {
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { items, updateQuantity, removeFromCart, totalPrice, totalItems } = useCart();
   const { user, signInWithGoogle } = useAuth();
+  
+  const [checkoutStep, setCheckoutStep] = useState<'cart' | 'address'>('cart');
+  const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
+
+  const addresses = (user?.user_metadata?.addresses || []) as any[];
 
   let discountPercent = 0;
   let appliedCode = '';
@@ -35,8 +41,23 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       return;
     }
     
+    if (checkoutStep === 'cart') {
+      setCheckoutStep('address');
+      return;
+    }
+
+    if (!selectedAddress) {
+      alert('Please select a delivery address');
+      return;
+    }
+    
     // TODO: Integrate Razorpay here
     alert('Razorpay checkout integration pending.');
+  };
+
+  const handleClose = () => {
+    setCheckoutStep('cart');
+    onClose();
   };
 
   return (
@@ -49,7 +70,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="absolute inset-0 bg-plum-950/60 backdrop-blur-sm"
-            onClick={onClose}
+            onClick={handleClose}
           />
 
           {/* Drawer */}
@@ -64,16 +85,26 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             {/* Header */}
             <div className="p-6 border-b border-lavender-100 flex items-center justify-between bg-gradient-to-r from-lavender-50 to-white">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-                  <ShoppingBag className="w-5 h-5" />
-                </div>
+                {checkoutStep === 'address' ? (
+                  <button onClick={() => setCheckoutStep('cart')} className="p-2 -ml-2 bg-white rounded-full hover:bg-lavender-100 transition-colors shadow-sm border border-lavender-100">
+                    <ChevronLeft className="w-5 h-5 text-plum-950" />
+                  </button>
+                ) : (
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                    <ShoppingBag className="w-5 h-5" />
+                  </div>
+                )}
                 <div>
-                  <h2 className="font-serif font-bold text-xl text-plum-950">Your Cart</h2>
-                  <p className="text-xs font-bold tracking-widest text-plum-900/50 uppercase">{totalItems} Items</p>
+                  <h2 className="font-serif font-bold text-xl text-plum-950">
+                    {checkoutStep === 'cart' ? 'Your Cart' : 'Checkout'}
+                  </h2>
+                  <p className="text-xs font-bold tracking-widest text-plum-900/50 uppercase">
+                    {checkoutStep === 'cart' ? `${totalItems} Items` : 'Delivery Details'}
+                  </p>
                 </div>
               </div>
               <button 
-                onClick={onClose} 
+                onClick={handleClose} 
                 className="p-2.5 bg-white border border-lavender-100 hover:bg-lavender-50 hover:border-lavender-200 hover:-rotate-90 rounded-full text-plum-900 shadow-sm transition-all duration-300"
               >
                 <X className="w-4 h-4" />
@@ -102,7 +133,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   Looks like you haven't added any beautiful bouquets or hampers yet.
                 </p>
                 <button 
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="px-8 py-4 bg-plum-950 text-white font-bold tracking-widest text-xs uppercase rounded-full hover:bg-primary shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-primary/30 transition-all transform hover:-translate-y-1 flex items-center gap-3 group"
                 >
                   Start Shopping
@@ -112,123 +143,167 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             ) : (
               <>
                 <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4 bg-slate-50/50">
-                  <AnimatePresence>
-                    {items.map((item) => {
-                      const primaryImage = item.product.product_images?.find(img => img.is_primary)?.image_url 
-                        || item.product.product_images?.[0]?.image_url 
-                        || 'https://via.placeholder.com/150';
+                  {checkoutStep === 'cart' ? (
+                    <>
+                      <AnimatePresence>
+                        {items.map((item) => {
+                          const primaryImage = item.product.product_images?.find(img => img.is_primary)?.image_url 
+                            || item.product.product_images?.[0]?.image_url 
+                            || 'https://via.placeholder.com/150';
 
-                      return (
-                        <motion.div 
-                          key={item.product.id} 
-                          layout
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95, x: 50 }}
-                          className="group flex gap-4 p-4 rounded-[1.5rem] border border-lavender-100/50 bg-white shadow-sm hover:shadow-xl hover:shadow-lavender-100/50 transition-all"
-                        >
-                          <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-gray-50 flex-shrink-0">
-                            <img 
-                              src={primaryImage} 
-                              alt={item.product.name} 
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                            />
-                            <div className="absolute inset-0 border border-black/5 rounded-2xl pointer-events-none"></div>
-                          </div>
-                          
-                          <div className="flex-1 flex flex-col py-1">
-                            <div className="flex justify-between items-start gap-2 mb-1">
-                              <h4 className="font-bold text-plum-950 text-sm line-clamp-2 leading-tight">
-                                {item.product.name}
-                              </h4>
-                              <button 
-                                onClick={() => removeFromCart(item.product.id)}
-                                className="p-1.5 text-plum-900/40 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                            
-                            <div className="text-primary font-black text-sm mb-3">
-                              Rs. {item.product.price.toLocaleString()}
-                            </div>
-                            
-                            <div className="mt-auto flex items-center gap-3">
-                              <div className="flex items-center bg-slate-50 rounded-full border border-lavender-100/60 shadow-inner overflow-hidden">
-                                <button 
-                                  onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                                  className="p-2 text-plum-900/60 hover:text-primary hover:bg-white transition-colors"
-                                >
-                                  <Minus className="w-3.5 h-3.5" />
-                                </button>
-                                <span className="w-8 text-center text-sm font-bold text-plum-950 bg-transparent">
-                                  {item.quantity}
-                                </span>
-                                <button 
-                                  onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                                  className="p-2 text-plum-900/60 hover:text-primary hover:bg-white transition-colors"
-                                >
-                                  <Plus className="w-3.5 h-3.5" />
-                                </button>
+                          return (
+                            <motion.div 
+                              key={item.product.id} 
+                              layout
+                              initial={{ opacity: 0, scale: 0.95 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.95, x: 50 }}
+                              className="group flex gap-4 p-4 rounded-[1.5rem] border border-lavender-100/50 bg-white shadow-sm hover:shadow-xl hover:shadow-lavender-100/50 transition-all"
+                            >
+                              <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-gray-50 flex-shrink-0">
+                                <img 
+                                  src={primaryImage} 
+                                  alt={item.product.name} 
+                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                                />
+                                <div className="absolute inset-0 border border-black/5 rounded-2xl pointer-events-none"></div>
                               </div>
-                            </div>
-                          </div>
-                        </motion.div>
-                      );
-                    })}
-                  </AnimatePresence>
-
-                  {/* Available Offers Section */}
-                  <div className="mt-4 p-4 bg-white rounded-[1.5rem] border border-lavender-100/50 shadow-sm flex-shrink-0">
-                    <h4 className="font-bold text-plum-950 text-sm mb-3 flex items-center gap-2 uppercase tracking-widest">
-                      <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                      </svg>
-                      Available Offers
-                    </h4>
-                    <div className="flex flex-col gap-2.5">
-                      {[
-                        { code: 'CHOCO30', desc: '30% off on orders above Rs. 2999', min: 2999 },
-                        { code: 'CHOCO20', desc: '20% off on orders above Rs. 1999', min: 1999 },
-                        { code: 'CHOCO10', desc: '10% off on orders above Rs. 999', min: 999 },
-                        { code: 'Welcome10', desc: '10% discount on your first order', min: 0 },
-                      ].map(offer => {
-                        const isApplied = appliedCode === offer.code;
-                        const isLocked = totalPrice < offer.min && offer.code !== 'Welcome10';
-                        const amountNeeded = offer.min - totalPrice;
-                        
-                        return (
-                          <div key={offer.code} className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all ${isApplied ? 'bg-green-50/50 border-green-200 shadow-sm' : 'bg-slate-50 border-lavender-50'}`}>
-                            <div className="flex-1">
-                              <div className="font-bold text-sm flex items-center gap-2 text-plum-950">
-                                <span className={isApplied ? 'text-green-700' : ''}>{offer.code}</span>
-                                {isApplied && (
-                                  <span className="text-[9px] bg-green-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">Auto-Applied</span>
-                                )}
-                              </div>
-                              <div className={`text-[11px] mt-1 font-medium ${isApplied ? 'text-green-600/80' : 'text-plum-900/60'}`}>
-                                {offer.desc}
-                              </div>
-                              {isLocked && (
-                                <div className="text-[10px] text-primary/80 font-bold mt-1.5 flex items-center gap-1">
-                                  Add Rs. {amountNeeded.toLocaleString()} more to unlock
+                              
+                              <div className="flex-1 flex flex-col py-1">
+                                <div className="flex justify-between items-start gap-2 mb-1">
+                                  <h4 className="font-bold text-plum-950 text-sm line-clamp-2 leading-tight">
+                                    {item.product.name}
+                                  </h4>
+                                  <button 
+                                    onClick={() => removeFromCart(item.product.id)}
+                                    className="p-1.5 text-plum-900/40 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
                                 </div>
-                              )}
-                            </div>
-                            <div className="flex-shrink-0 ml-3">
-                              <div className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${isApplied ? 'border-green-500 bg-green-500 text-white' : 'border-lavender-200 text-transparent'}`}>
-                                {isApplied && (
-                                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                  </svg>
-                                )}
+                                
+                                <div className="text-primary font-black text-sm mb-3">
+                                  Rs. {item.product.price.toLocaleString()}
+                                </div>
+                                
+                                <div className="mt-auto flex items-center gap-3">
+                                  <div className="flex items-center bg-slate-50 rounded-full border border-lavender-100/60 shadow-inner overflow-hidden">
+                                    <button 
+                                      onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                                      className="p-2 text-plum-900/60 hover:text-primary hover:bg-white transition-colors"
+                                    >
+                                      <Minus className="w-3.5 h-3.5" />
+                                    </button>
+                                    <span className="w-8 text-center text-sm font-bold text-plum-950 bg-transparent">
+                                      {item.quantity}
+                                    </span>
+                                    <button 
+                                      onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                                      className="p-2 text-plum-900/60 hover:text-primary hover:bg-white transition-colors"
+                                    >
+                                      <Plus className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
+                            </motion.div>
+                          );
+                        })}
+                      </AnimatePresence>
+
+                      {/* Available Offers Section */}
+                      <div className="mt-4 p-4 bg-white rounded-[1.5rem] border border-lavender-100/50 shadow-sm flex-shrink-0">
+                        <h4 className="font-bold text-plum-950 text-sm mb-3 flex items-center gap-2 uppercase tracking-widest">
+                          <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                          </svg>
+                          Available Offers
+                        </h4>
+                        <div className="flex flex-col gap-2.5">
+                          {[
+                            { code: 'CHOCO30', desc: '30% off on orders above Rs. 2999', min: 2999 },
+                            { code: 'CHOCO20', desc: '20% off on orders above Rs. 1999', min: 1999 },
+                            { code: 'CHOCO10', desc: '10% off on orders above Rs. 999', min: 999 },
+                            { code: 'Welcome10', desc: '10% discount on your first order', min: 0 },
+                          ].map(offer => {
+                            const isApplied = appliedCode === offer.code;
+                            const isLocked = totalPrice < offer.min && offer.code !== 'Welcome10';
+                            const amountNeeded = offer.min - totalPrice;
+                            
+                            return (
+                              <div key={offer.code} className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all ${isApplied ? 'bg-green-50/50 border-green-200 shadow-sm' : 'bg-slate-50 border-lavender-50'}`}>
+                                <div className="flex-1">
+                                  <div className="font-bold text-sm flex items-center gap-2 text-plum-950">
+                                    <span className={isApplied ? 'text-green-700' : ''}>{offer.code}</span>
+                                    {isApplied && (
+                                      <span className="text-[9px] bg-green-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">Auto-Applied</span>
+                                    )}
+                                  </div>
+                                  <div className={`text-[11px] mt-1 font-medium ${isApplied ? 'text-green-600/80' : 'text-plum-900/60'}`}>
+                                    {offer.desc}
+                                  </div>
+                                  {isLocked && (
+                                    <div className="text-[10px] text-primary/80 font-bold mt-1.5 flex items-center gap-1">
+                                      Add Rs. {amountNeeded.toLocaleString()} more to unlock
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex-shrink-0 ml-3">
+                                  <div className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${isApplied ? 'border-green-500 bg-green-500 text-white' : 'border-lavender-200 text-transparent'}`}>
+                                    {isApplied && (
+                                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                      </svg>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <motion.div 
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="flex flex-col gap-4 py-2"
+                    >
+                      <h3 className="font-serif font-bold text-lg text-plum-950 flex items-center gap-2 mb-2">
+                        <MapPin className="w-5 h-5 text-primary" /> Select Delivery Address
+                      </h3>
+                      {addresses.length === 0 ? (
+                        <div className="p-8 text-center border-2 border-dashed border-lavender-200 rounded-2xl bg-white flex flex-col items-center">
+                          <MapPin className="w-10 h-10 text-primary/40 mb-3" />
+                          <p className="text-plum-900/60 mb-6 font-medium">You have no saved addresses yet.</p>
+                          <a href="/profile/addresses" onClick={handleClose} className="px-6 py-3 bg-primary text-white font-bold rounded-full shadow-md text-sm tracking-wider hover:bg-primary-hover transition-colors">
+                            ADD NEW ADDRESS
+                          </a>
+                        </div>
+                      ) : (
+                        addresses.map(addr => (
+                          <div 
+                            key={addr.id} 
+                            onClick={() => setSelectedAddress(addr.id)}
+                            className={`p-5 rounded-2xl border-2 cursor-pointer transition-all flex items-start justify-between ${selectedAddress === addr.id ? 'border-primary bg-primary/5 shadow-md scale-[1.02]' : 'border-lavender-100 bg-white hover:border-primary/50'}`}
+                          >
+                            <div>
+                              <h4 className="font-bold text-plum-950 flex items-center gap-2">
+                                {addr.name} 
+                                {selectedAddress === addr.id && <span className="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full uppercase tracking-wider">Selected</span>}
+                              </h4>
+                              <p className="text-sm text-plum-900/70 mt-1">{addr.street}</p>
+                              <p className="text-sm text-plum-900/70">{addr.city}, {addr.state} {addr.pincode}</p>
+                              <p className="text-xs font-bold text-primary mt-2 flex items-center gap-1">📞 {addr.phone}</p>
+                            </div>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${selectedAddress === addr.id ? 'border-primary bg-primary' : 'border-lavender-200'}`}>
+                              {selectedAddress === addr.id && <div className="w-2.5 h-2.5 bg-white rounded-full"></div>}
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                        ))
+                      )}
+                    </motion.div>
+                  )}
                 </div>
 
                 {/* Footer */}
@@ -272,7 +347,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   >
                     <div className="absolute inset-0 w-full h-full bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out skew-x-12"></div>
                     <span className="relative z-10 flex items-center justify-center gap-2">
-                      {user ? 'Checkout' : 'Login to Checkout'}
+                      {checkoutStep === 'cart' ? (user ? 'Proceed to Checkout' : 'Login to Checkout') : 'Pay Now'}
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </span>
                   </button>

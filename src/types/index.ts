@@ -33,3 +33,20 @@ export interface Reel {
   thumbnail_url: string;
   description: string;
 }
+
+export interface Address {
+  id: string;
+  name: string;
+  street: string;
+  city: string;
+  state: string;
+  pincode: string;
+  phone: string;
+}
+
+export interface SavedCard {
+  id: string;
+  nameOnCard: string;
+  cardNumber: string; // usually masked like **** **** **** 1234
+  expiry: string;
+}
