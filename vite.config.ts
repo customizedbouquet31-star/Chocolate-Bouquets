@@ -10,10 +10,11 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'The Chocolate Bouquet Admin',
-        short_name: 'TCB Admin',
-        description: 'Admin Dashboard for The Chocolate Bouquet',
-        theme_color: '#4a154b',
+        name: 'The Chocolate Bouquet X Hamper',
+        short_name: 'The Chocolate Bouquet',
+        description: 'Handcrafted custom chocolate bouquets and luxury gift hampers.',
+        theme_color: '#1a0f2e',
+        background_color: '#f8f4ff',
         icons: [
           {
             src: 'logo.png',
