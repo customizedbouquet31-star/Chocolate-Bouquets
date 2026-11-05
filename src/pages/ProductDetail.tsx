@@ -18,19 +18,30 @@ export default function ProductDetail() {
   useEffect(() => {
     async function fetchProduct() {
       setLoading(true);
-      const { data } = await supabase
-        .from('products')
-        .select('*, product_images(image_url, is_primary)')
-        .eq('id', productId)
-        .single();
-        
-      if (data) {
-        setProduct(data);
-        setActiveImage(data.product_images?.find((i: any) => i.is_primary)?.image_url || data.product_images?.[0]?.image_url || 'https://via.placeholder.com/600x800?text=No+Image');
-      } else {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*, product_images(image_url, is_primary)')
+          .eq('id', productId)
+          .single();
+          
+        if (data) {
+          setProduct(data);
+          setActiveImage(
+            data.product_images?.find((i: any) => i.is_primary)?.image_url || 
+            data.product_images?.[0]?.image_url || 
+            'https://via.placeholder.com/600x800?text=No+Image'
+          );
+        } else {
+          console.warn('Product not found in database:', productId, error);
+          navigate('/shop');
+        }
+      } catch (err) {
+        console.error('Error fetching product:', err);
         navigate('/shop');
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     if (productId) fetchProduct();
   }, [productId, navigate]);

@@ -32,14 +32,26 @@ export default function Shop() {
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      const [productsRes, categoriesRes] = await Promise.all([
-        supabase.from('products').select('*, product_images(image_url, is_primary)'),
-        supabase.from('categories').select('*').order('name')
-      ]);
+      try {
+        const [productsRes, categoriesRes] = await Promise.all([
+          supabase
+            .from('products')
+            .select('*, product_images(image_url, is_primary)')
+            .order('created_at', { ascending: false }),
+          supabase.from('categories').select('*').order('name')
+        ]);
 
-      if (productsRes.data) setProducts(productsRes.data);
-      if (categoriesRes.data) setCategories(categoriesRes.data);
-      setLoading(false);
+        if (productsRes.data) {
+          setProducts(productsRes.data);
+        }
+        if (categoriesRes.data) {
+          setCategories(categoriesRes.data);
+        }
+      } catch (err) {
+        console.error('Error fetching shop data:', err);
+      } finally {
+        setLoading(false);
+      }
     }
     fetchData();
   }, []);

@@ -90,3 +90,15 @@
     scrollbar-width: none;
   }
 }
+
+/* Luxury Splash Screen transition hooks */
+body.splash-active {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
+#root {
+  transition: opacity 0.5s ease-out;
+}
+
+

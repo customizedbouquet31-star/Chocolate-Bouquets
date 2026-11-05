@@ -9,28 +9,46 @@ export default function CategoryScroller() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const defaultCategories: Category[] = [
+    { id: '64e954cf-585b-4752-beae-82fec0119e1f', name: 'Chocolate Bouquets', slug: 'chocolate-bouquets', image_url: '/categories/chocolate.png', created_at: '' },
+    { id: 'ca82cdd8-bfa1-4924-b435-5e0d219ff81a', name: 'Flower Bouquets', slug: 'flower-bouquets', image_url: '/categories/flower.png', created_at: '' },
+    { id: '5b00a6c3-0c26-46c2-bfc1-199e4e9449cf', name: 'Polaroid Bouquets', slug: 'polaroid-photo-bouquets', image_url: '/categories/polaroid.png', created_at: '' },
+    { id: '0ce6156d-4127-4c6f-860d-5afbf6e9d646', name: "Men's Hampers", slug: 'mens-hampers', image_url: '/categories/mens.png', created_at: '' },
+    { id: '9419808b-4314-456d-80fb-07875e50d122', name: "Women's Hampers", slug: 'womens-hampers', image_url: '/categories/womens.png', created_at: '' },
+    { id: '168b2dc7-de08-4c20-ae0d-e26b0e0767ab', name: 'Theme Bouquets', slug: 'theme-bouquets', image_url: '/categories/theme.png', created_at: '' },
+    { id: 'deeb3f7c-401a-43c0-8098-86008c33786f', name: 'Festive Finds', slug: 'festive-finds', image_url: '/categories/festival.png', created_at: '' },
+    { id: '3faad705-d4a5-4c0e-955e-26a0ada9bf03', name: 'Cards & Letters', slug: 'cards-letters', image_url: '/categories/cards.png', created_at: '' },
+  ];
+
   useEffect(() => {
     async function fetchCategories() {
-      const { data } = await supabase.from('categories').select('*').order('created_at', { ascending: true });
-      if (data) {
-        // Map beautiful custom generated photos
-        const mappedData = data.map((cat: any) => {
-          let customImg = '';
-          if (cat.slug.includes('flower')) customImg = '/categories/flower.png';
-          else if (cat.slug.includes('chocolate')) customImg = '/categories/chocolate.png';
-          else if (cat.slug.includes('women')) customImg = '/categories/womens.png';
-          else if (cat.slug.includes('men')) customImg = '/categories/mens.png';
-          else if (cat.slug.includes('festiv')) customImg = '/categories/festival.png';
-          else if (cat.slug.includes('theme')) customImg = '/categories/theme.png';
-          else if (cat.slug.includes('polaroid')) customImg = '/categories/polaroid.png';
-          else if (cat.slug.includes('card')) customImg = '/categories/cards.png';
-          else customImg = 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?q=80&w=600&h=800&fit=crop';
-          
-          return { ...cat, image_url: customImg };
-        });
-        setCategories(mappedData);
+      try {
+        const { data } = await supabase.from('categories').select('*').order('created_at', { ascending: true });
+        if (data && data.length > 0) {
+          // Map beautiful custom generated photos
+          const mappedData = data.map((cat: any) => {
+            let customImg = '';
+            if (cat.slug.includes('flower')) customImg = '/categories/flower.png';
+            else if (cat.slug.includes('chocolate')) customImg = '/categories/chocolate.png';
+            else if (cat.slug.includes('women')) customImg = '/categories/womens.png';
+            else if (cat.slug.includes('men')) customImg = '/categories/mens.png';
+            else if (cat.slug.includes('festiv')) customImg = '/categories/festival.png';
+            else if (cat.slug.includes('theme')) customImg = '/categories/theme.png';
+            else if (cat.slug.includes('polaroid')) customImg = '/categories/polaroid.png';
+            else if (cat.slug.includes('card')) customImg = '/categories/cards.png';
+            else customImg = 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?q=80&w=600&h=800&fit=crop';
+            
+            return { ...cat, image_url: customImg };
+          });
+          setCategories(mappedData);
+        } else {
+          setCategories(defaultCategories);
+        }
+      } catch (e) {
+        setCategories(defaultCategories);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     fetchCategories();
   }, []);

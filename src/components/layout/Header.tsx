@@ -76,10 +76,13 @@ export default function Header({ onCartClick }: { onCartClick: () => void }) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="hidden md:flex items-center justify-center flex-1 gap-10 text-[13px] font-bold tracking-widest text-plum-900/80 mx-8"
+                className="hidden md:flex items-center justify-center flex-1 gap-6 lg:gap-8 text-[12px] lg:text-[13px] font-bold tracking-widest text-plum-900/80 mx-4 lg:mx-8 whitespace-nowrap"
               >
                 <Link to="/" className="hover:text-primary transition-colors">HOME</Link>
                 <Link to="/shop" className="hover:text-primary transition-colors">SHOP</Link>
+                <Link to="/collection/chocolate-bouquets" className="hover:text-primary transition-colors">BOUQUETS</Link>
+                <Link to="/collection/mens-hampers" className="hover:text-primary transition-colors">MEN'S HAMPERS</Link>
+                <Link to="/collection/womens-hampers" className="hover:text-primary transition-colors">WOMEN'S HAMPERS</Link>
                 <Link to="/about" className="hover:text-primary transition-colors">ABOUT</Link>
                 <Link to="/contact" className="hover:text-primary transition-colors">CONTACT</Link>
               </motion.nav>
@@ -246,11 +249,20 @@ export default function Header({ onCartClick }: { onCartClick: () => void }) {
                 <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors flex items-center gap-4">
                   <span className="w-8 h-8 rounded-full bg-lavender-50 flex items-center justify-center text-primary">02</span> SHOP
                 </Link>
+                <Link to="/collection/chocolate-bouquets" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors flex items-center gap-4">
+                  <span className="w-8 h-8 rounded-full bg-lavender-50 flex items-center justify-center text-primary">03</span> BOUQUETS
+                </Link>
+                <Link to="/collection/mens-hampers" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors flex items-center gap-4">
+                  <span className="w-8 h-8 rounded-full bg-lavender-50 flex items-center justify-center text-primary">04</span> MEN'S HAMPERS
+                </Link>
+                <Link to="/collection/womens-hampers" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors flex items-center gap-4">
+                  <span className="w-8 h-8 rounded-full bg-lavender-50 flex items-center justify-center text-primary">05</span> WOMEN'S HAMPERS
+                </Link>
                 <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors flex items-center gap-4">
-                  <span className="w-8 h-8 rounded-full bg-lavender-50 flex items-center justify-center text-primary">03</span> ABOUT
+                  <span className="w-8 h-8 rounded-full bg-lavender-50 flex items-center justify-center text-primary">06</span> ABOUT
                 </Link>
                 <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors flex items-center gap-4">
-                  <span className="w-8 h-8 rounded-full bg-lavender-50 flex items-center justify-center text-primary">04</span> CONTACT
+                  <span className="w-8 h-8 rounded-full bg-lavender-50 flex items-center justify-center text-primary">07</span> CONTACT
                 </Link>
               </nav>
 

@@ -15,14 +15,25 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchProducts() {
-      const { data } = await supabase
-        .from('products')
-        .select('*, product_images(image_url, is_primary)')
-        .order('created_at', { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*, product_images(image_url, is_primary)')
+          .order('created_at', { ascending: false });
 
-      if (data) {
-        setBestSellers(data.filter(p => p.is_bestseller));
-        setNewLaunches(data.filter(p => p.is_new));
+        if (error) {
+          console.error('Error fetching products:', error);
+          return;
+        }
+
+        if (data && data.length > 0) {
+          const bs = data.filter(p => p.is_bestseller);
+          const nl = data.filter(p => p.is_new);
+          setBestSellers(bs.length > 0 ? bs : data.slice(0, 10));
+          setNewLaunches(nl.length > 0 ? nl : data.slice(0, 10));
+        }
+      } catch (e) {
+        console.error('Failed to load products from database', e);
       }
     }
     fetchProducts();
