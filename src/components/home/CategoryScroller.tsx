@@ -105,7 +105,13 @@ export default function CategoryScroller() {
 
                   <div className="relative w-full h-full mt-10 md:mt-12 rounded-lg overflow-hidden bg-white/20">
                     {category.image_url && (
-                      <img src={category.image_url} alt={category.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                      <img 
+                        src={category.image_url} 
+                        alt={category.name} 
+                        loading="lazy"
+                        decoding="async"
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 will-change-transform" 
+                      />
                     )}
                   </div>
                 </a>

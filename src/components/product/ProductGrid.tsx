@@ -1,5 +1,4 @@
 import type { Product } from '../../types';
-import { motion } from 'framer-motion';
 import ProductCard from './ProductCard';
 
 interface ProductGridProps {
@@ -38,27 +37,12 @@ export default function ProductGrid({
       : "";
 
   return (
-    <motion.div 
-      className={gridClasses}
-      initial="hidden"
-      animate="visible"
-      variants={{
-        visible: { transition: { staggerChildren: 0.05 } }
-      }}
-    >
+    <div className={gridClasses}>
       {products.map(product => (
-        <motion.div 
-          key={product.id} 
-          className={mobileItemClass}
-          variants={{
-            hidden: { opacity: 0, y: 20 },
-            visible: { opacity: 1, y: 0 }
-          }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-        >
+        <div key={product.id} className={mobileItemClass}>
           <ProductCard product={product} badge={badge} size={size} />
-        </motion.div>
+        </div>
       ))}
-    </motion.div>
+    </div>
   );
 }

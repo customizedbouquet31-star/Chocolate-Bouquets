@@ -11,8 +11,8 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-r from-lavender-50/90 via-lavender-50/50 to-transparent z-0"></div>
 
       {/* Background Decor */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-lavender-200/60 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 z-0"></div>
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 z-0"></div>
+      <div className="absolute top-0 right-0 w-[450px] h-[450px] bg-lavender-200/50 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 z-0 pointer-events-none transform-gpu"></div>
+      <div className="absolute bottom-0 left-0 w-[350px] h-[350px] bg-primary/15 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2 z-0 pointer-events-none transform-gpu"></div>
 
       <div className="max-w-7xl mx-auto px-6 w-full flex flex-col md:flex-row items-center gap-12 lg:gap-20 z-10 py-8 md:py-0">
         
@@ -62,59 +62,45 @@ export default function Hero() {
           className="hidden md:flex flex-1 w-full relative items-center justify-center min-h-[400px] lg:min-h-[600px]"
         >
           {/* Glowing aura behind logo */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-gradient-to-tr from-primary/30 via-lavender-300/40 to-rose-400/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[70%] bg-gradient-to-tr from-primary/20 via-lavender-300/30 to-rose-400/15 rounded-full blur-2xl pointer-events-none transform-gpu"></div>
 
           {/* Floating Logo without the restrictive card */}
-          <motion.div 
-            animate={{ y: [0, -15, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="relative z-10 w-full max-w-[500px]"
-          >
+          <div className="relative z-10 w-full max-w-[500px] transform-gpu">
             <img 
               src="/logo.png" 
               alt="The Chocolate Bouquet Logo" 
-              className="w-full h-auto object-contain drop-shadow-2xl rounded-3xl md:rounded-[3rem]"
+              loading="eager"
+              decoding="async"
+              className="w-full h-auto object-contain drop-shadow-xl rounded-3xl md:rounded-[3rem]"
             />
-          </motion.div>
+          </div>
           
           {/* Value Proposition Badge 1 */}
-          <motion.div 
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-            className="absolute top-4 -right-2 md:-right-8 bg-white/95 backdrop-blur-md p-3 pr-6 rounded-full shadow-xl border border-white/60 flex items-center gap-3 z-20"
-          >
+          <div className="absolute top-4 -right-2 md:-right-8 bg-white/95 shadow-lg border border-lavender-100/60 p-3 pr-6 rounded-full flex items-center gap-3 z-20 transform-gpu">
             <div className="w-10 h-10 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 text-lg">🍫</div>
             <div>
               <p className="text-[11px] font-bold text-plum-950 uppercase tracking-wider leading-tight">Premium</p>
               <p className="text-[10px] text-plum-900/60 font-medium">Imported Chocolates</p>
             </div>
-          </motion.div>
+          </div>
 
           {/* Value Proposition Badge 2 */}
-          <motion.div 
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="absolute bottom-16 -left-4 md:-left-12 bg-white/95 backdrop-blur-md p-3 pr-6 rounded-full shadow-xl border border-white/60 flex items-center gap-3 z-20"
-          >
+          <div className="absolute bottom-16 -left-4 md:-left-12 bg-white/95 shadow-lg border border-lavender-100/60 p-3 pr-6 rounded-full flex items-center gap-3 z-20 transform-gpu">
             <div className="w-10 h-10 bg-lavender-100 rounded-full flex items-center justify-center text-primary text-lg">🌸</div>
             <div>
               <p className="text-[11px] font-bold text-plum-950 uppercase tracking-wider leading-tight">Freshly</p>
               <p className="text-[10px] text-plum-900/60 font-medium">Handpicked Flowers</p>
             </div>
-          </motion.div>
+          </div>
 
           {/* Value Proposition Badge 3 */}
-          <motion.div 
-            animate={{ y: [0, -12, 0] }}
-            transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-            className="absolute -bottom-6 right-8 md:right-4 bg-white/95 backdrop-blur-md p-3 pr-6 rounded-full shadow-xl border border-white/60 flex items-center gap-3 z-20"
-          >
+          <div className="absolute -bottom-6 right-8 md:right-4 bg-white/95 shadow-lg border border-lavender-100/60 p-3 pr-6 rounded-full flex items-center gap-3 z-20 transform-gpu">
             <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 text-lg">✨</div>
             <div>
               <p className="text-[11px] font-bold text-plum-950 uppercase tracking-wider leading-tight">100% Custom</p>
               <p className="text-[10px] text-plum-900/60 font-medium">Made to order</p>
             </div>
-          </motion.div>
+          </div>
         </motion.div>
 
       </div>

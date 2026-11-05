@@ -80,8 +80,8 @@ export default function Shop() {
       
       {/* Hero Banner */}
       <section className="relative pt-8 pb-6 md:pt-10 md:pb-8 overflow-hidden bg-gradient-to-br from-lavender-50 via-white to-primary/5">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-rose-200/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+        <div className="absolute top-0 right-0 w-[450px] h-[450px] bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/3 pointer-events-none transform-gpu"></div>
+        <div className="absolute bottom-0 left-0 w-[350px] h-[350px] bg-rose-200/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2 pointer-events-none transform-gpu"></div>
         
         <div className="w-full px-6 md:px-12 relative z-10 flex flex-col items-center text-center">
           <motion.div
@@ -102,7 +102,7 @@ export default function Shop() {
       <div className="w-full px-4 md:px-12 pb-12 md:pb-20 -mt-4 relative z-20">
         
         {/* Toolbar (Mobile Filters / Sorting) */}
-        <div className="flex flex-col md:flex-row justify-between items-center bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-lavender-100 mb-8 gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-center bg-white/95 p-4 rounded-2xl shadow-sm border border-lavender-100 mb-8 gap-4">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-4 pl-2">
             <span className="text-sm font-bold text-plum-900/50 uppercase tracking-wider hidden md:block">
               Showing {sortedProducts.length} Results

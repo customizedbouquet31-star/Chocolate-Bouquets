@@ -32,7 +32,9 @@ export default function ProductCard({ product, badge, size = 'default' }: Produc
           <img 
             src={primaryImage} 
             alt={product.name} 
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out will-change-transform"
           />
           
           {/* Badges - Top Left Stacked */}
@@ -118,7 +120,9 @@ export default function ProductCard({ product, badge, size = 'default' }: Produc
         <img 
           src={primaryImage} 
           alt={product.name} 
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out will-change-transform"
         />
         
         {/* Badges - Top Left Stacked */}

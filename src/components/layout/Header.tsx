@@ -22,8 +22,22 @@ export default function Header({ onCartClick }: { onCartClick: () => void }) {
   };
 
   useEffect(() => {
+    let ticking = false;
+    let lastScrolled = window.scrollY > 40;
+    setIsScrolled(lastScrolled);
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const isNowScrolled = window.scrollY > 40;
+          if (isNowScrolled !== lastScrolled) {
+            setIsScrolled(isNowScrolled);
+            lastScrolled = isNowScrolled;
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -35,28 +49,24 @@ export default function Header({ onCartClick }: { onCartClick: () => void }) {
       <div className="w-full h-4 bg-transparent absolute top-0 left-0 z-40"></div>
 
       {/* Sticky wrapper */}
-      <div className="sticky top-2 md:top-4 z-50 w-full flex justify-center px-4 md:px-6 pointer-events-none transition-all duration-500">
-        <motion.header 
-          layout
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className={`pointer-events-auto flex items-center justify-between backdrop-blur-xl bg-white/75 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-lavender-100/50 transition-all duration-500 ${
+      <div className="sticky top-2 md:top-4 z-50 w-full flex justify-center px-4 md:px-6 pointer-events-none">
+        <header 
+          className={`pointer-events-auto flex items-center justify-between backdrop-blur-md bg-white/95 shadow-[0_4px_20px_rgb(0,0,0,0.04)] border border-lavender-100/60 transition-all duration-300 ease-out will-change-transform ${
             isScrolled 
               ? 'rounded-full w-full md:w-fit md:min-w-[600px] px-4 md:px-6 py-2.5' 
-              : 'rounded-2xl md:rounded-[2rem] w-full max-w-[1400px] px-5 md:px-10 py-4 md:py-5'
+              : 'rounded-2xl md:rounded-[2rem] w-full max-w-[1400px] px-5 md:px-10 py-3.5 md:py-4'
           }`}
         >
           {/* Mobile Menu Button */}
-          <motion.div layout className="flex items-center md:hidden">
+          <div className="flex items-center md:hidden">
             <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 -ml-2 hover:bg-lavender-50 rounded-full transition-colors">
               <Menu className="w-5 h-5 text-plum-900" />
             </button>
-          </motion.div>
+          </div>
 
           {/* Dynamic Logo */}
-          <motion.a layout href="/" className="flex items-center justify-center md:justify-start z-10 flex-shrink-0">
-            <div className="font-serif font-bold text-plum-950 text-center md:text-left transition-all duration-500">
+          <a href="/" className="flex items-center justify-center md:justify-start z-10 flex-shrink-0">
+            <div className="font-serif font-bold text-plum-950 text-center md:text-left transition-all duration-300">
               {isScrolled ? (
                 <div className="text-xl md:text-2xl tracking-widest block font-black">TCB.</div>
               ) : (
@@ -65,43 +75,23 @@ export default function Header({ onCartClick }: { onCartClick: () => void }) {
                 </div>
               )}
             </div>
-          </motion.a>
+          </a>
 
           {/* Desktop Navigation */}
-          <AnimatePresence mode="wait">
-            {!isScrolled ? (
-              <motion.nav 
-                key="full-nav"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="hidden md:flex items-center justify-center flex-1 gap-6 lg:gap-8 text-[12px] lg:text-[13px] font-bold tracking-widest text-plum-900/80 mx-4 lg:mx-8 whitespace-nowrap"
-              >
-                <Link to="/" className="hover:text-primary transition-colors">HOME</Link>
-                <Link to="/shop" className="hover:text-primary transition-colors">SHOP</Link>
-                <Link to="/collection/chocolate-bouquets" className="hover:text-primary transition-colors">BOUQUETS</Link>
-                <Link to="/collection/mens-hampers" className="hover:text-primary transition-colors">MEN'S HAMPERS</Link>
-                <Link to="/collection/womens-hampers" className="hover:text-primary transition-colors">WOMEN'S HAMPERS</Link>
-                <Link to="/about" className="hover:text-primary transition-colors">ABOUT</Link>
-                <Link to="/contact" className="hover:text-primary transition-colors">CONTACT</Link>
-              </motion.nav>
-            ) : (
-              <motion.nav 
-                key="compact-nav"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="hidden md:flex items-center justify-center gap-8 text-[12px] font-bold tracking-widest text-plum-900/80 mx-8"
-              >
-                <Link to="/shop" className="hover:text-primary transition-colors">SHOP</Link>
-              </motion.nav>
-            )}
-          </AnimatePresence>
+          <div className="hidden md:flex items-center justify-center flex-1 mx-4 lg:mx-8">
+            <nav className="flex items-center justify-center gap-6 lg:gap-8 text-[12px] lg:text-[13px] font-bold tracking-widest text-plum-900/80 whitespace-nowrap">
+              <Link to="/" className="hover:text-primary transition-colors">HOME</Link>
+              <Link to="/shop" className="hover:text-primary transition-colors">SHOP</Link>
+              <Link to="/collection/chocolate-bouquets" className="hover:text-primary transition-colors">BOUQUETS</Link>
+              <Link to="/collection/mens-hampers" className="hover:text-primary transition-colors">MEN'S HAMPERS</Link>
+              <Link to="/collection/womens-hampers" className="hover:text-primary transition-colors">WOMEN'S HAMPERS</Link>
+              <Link to="/about" className="hover:text-primary transition-colors">ABOUT</Link>
+              <Link to="/contact" className="hover:text-primary transition-colors">CONTACT</Link>
+            </nav>
+          </div>
 
           {/* Actions */}
-          <motion.div layout className="flex items-center justify-end gap-1 md:gap-3 flex-shrink-0">
+          <div className="flex items-center justify-end gap-1 md:gap-3 flex-shrink-0">
             <button 
               onClick={() => setIsSearchOpen(true)}
               className="p-2 hover:bg-lavender-50 rounded-full transition-colors hidden sm:block"
@@ -210,8 +200,8 @@ export default function Header({ onCartClick }: { onCartClick: () => void }) {
                 </motion.a>
               )}
             </AnimatePresence>
-          </motion.div>
-        </motion.header>
+          </div>
+        </header>
       </div>
 
       {/* Mobile Menu Overlay */}

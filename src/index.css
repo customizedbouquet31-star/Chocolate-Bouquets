@@ -49,6 +49,12 @@
     --background: var(--color-lavender-50);
     --foreground: var(--color-plum-900);
   }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
   
   body {
     background-color: var(--background);
@@ -56,10 +62,22 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    text-rendering: optimizeSpeed;
   }
   
   h1, h2, h3, h4, h5, h6 {
     color: var(--foreground);
+  }
+
+  /* GPU layer optimization for smooth 60/120fps scrolling */
+  img {
+    content-visibility: auto;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
   }
 
   @keyframes shimmer {

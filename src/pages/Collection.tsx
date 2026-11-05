@@ -253,8 +253,8 @@ export default function Collection() {
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 w-full items-start">
           
           {/* Left Sidebar: Navigation & Sort Buttons for all categories */}
-          <aside className="w-full lg:w-64 xl:w-72 lg:sticky lg:top-24 flex-shrink-0 z-30">
-            <div className="bg-white/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-lavender-100 shadow-sm flex flex-col gap-5">
+          <aside className="w-full lg:w-64 xl:w-72 lg:sticky lg:top-24 flex-shrink-0 z-30 transform-gpu">
+            <div className="bg-white/95 p-4 sm:p-5 rounded-2xl border border-lavender-100/80 shadow-sm flex flex-col gap-5">
               
               {/* Category / Sub-section Links */}
               <div>
