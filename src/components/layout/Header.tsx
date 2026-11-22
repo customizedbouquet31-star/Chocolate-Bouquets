@@ -10,7 +10,7 @@ export default function Header({ onCartClick }: { onCartClick: () => void }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(() => typeof window !== 'undefined' && window.scrollY > 40);
   const { totalItems } = useCart();
   const { user, signOut } = useAuth();
 
@@ -24,7 +24,6 @@ export default function Header({ onCartClick }: { onCartClick: () => void }) {
   useEffect(() => {
     let ticking = false;
     let lastScrolled = window.scrollY > 40;
-    setIsScrolled(lastScrolled);
 
     const handleScroll = () => {
       if (!ticking) {

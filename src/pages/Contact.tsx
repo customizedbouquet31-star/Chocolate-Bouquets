@@ -46,8 +46,8 @@ export default function Contact() {
       id: 'email',
       icon: Mail,
       title: 'Email Support',
-      value: 'hello@placeholder.com',
-      link: 'mailto:hello@placeholder.com',
+      value: 'support@thechocolatebouquets.in',
+      link: 'mailto:support@thechocolatebouquets.in',
       color: 'text-blue-400',
       bgHover: 'group-hover:bg-blue-400/10',
       borderHover: 'group-hover:border-blue-400/30'

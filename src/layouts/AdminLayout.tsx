@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import type { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { 
   LayoutDashboard, 
@@ -13,7 +14,7 @@ import {
 import { InstagramIcon } from '../components/icons/InstagramIcon';
 
 export default function AdminLayout() {
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
@@ -44,14 +45,14 @@ export default function AdminLayout() {
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'orders' },
-        (_payload) => {
+        () => {
           if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('New Order Received! 🛍️', {
-              body: `A new order has just been placed. Check your dashboard!`,
+            const notifOptions: NotificationOptions = {
+              body: 'A new order has just been placed. Check your dashboard!',
               icon: '/logo.png',
               badge: '/logo.png',
-              vibrate: [200, 100, 200]
-            } as any);
+            };
+            new Notification('New Order Received! 🛍️', notifOptions);
           } else {
             alert('New Order Received! 🛍️');
           }

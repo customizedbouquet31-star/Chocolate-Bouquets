@@ -20,7 +20,7 @@ export default function Coupon() {
     setTimeout(() => setCopiedCode(null), 3000);
   };
 
-  const handleDragEnd = (_event: any, info: PanInfo) => {
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const swipeThreshold = 50;
     if (info.offset.x < -swipeThreshold) {
       // Swipe left - next card
@@ -75,19 +75,19 @@ export default function Coupon() {
           <AnimatePresence initial={false}>
             {offers.map((offer, index) => {
               // Calculate relative position (0 is active, 1 is next, 2 is after next, etc)
-              let relativeIndex = (index - activeIndex + offers.length) % offers.length;
+              const relativeIndex = (index - activeIndex + offers.length) % offers.length;
               
               // Only render the active card and a few cards behind it to save performance
               if (relativeIndex > 2 && relativeIndex !== offers.length - 1) return null;
 
               // For visual stacking
-              let isTop = relativeIndex === 0;
-              let isPrev = relativeIndex === offers.length - 1;
+              const isTop = relativeIndex === 0;
+              const isPrev = relativeIndex === offers.length - 1;
 
-              let scale = isTop ? 1 : isPrev ? 0.9 : 1 - (relativeIndex * 0.05);
-              let yOffset = isTop ? 0 : isPrev ? -20 : relativeIndex * 20;
-              let zIndex = isTop ? 10 : isPrev ? 0 : 10 - relativeIndex;
-              let opacity = isTop ? 1 : isPrev ? 0 : 1 - (relativeIndex * 0.3);
+              const scale = isTop ? 1 : isPrev ? 0.9 : 1 - (relativeIndex * 0.05);
+              const yOffset = isTop ? 0 : isPrev ? -20 : relativeIndex * 20;
+              const zIndex = isTop ? 10 : isPrev ? 0 : 10 - relativeIndex;
+              const opacity = isTop ? 1 : isPrev ? 0 : 1 - (relativeIndex * 0.3);
 
               return (
                 <motion.div 

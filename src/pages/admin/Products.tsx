@@ -40,12 +40,7 @@ export default function Products() {
   });
   const [imageFiles, setImageFiles] = useState<File[]>([]);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    setLoading(true);
+  const refreshData = async () => {
     const [productsRes, categoriesRes] = await Promise.all([
       supabase.from('products').select('*').order('created_at', { ascending: false }),
       supabase.from('categories').select('id, name').order('name')
@@ -53,8 +48,21 @@ export default function Products() {
 
     if (productsRes.data) setProducts(productsRes.data);
     if (categoriesRes.data) setCategories(categoriesRes.data);
-    setLoading(false);
   };
+
+  useEffect(() => {
+    async function loadInitialData() {
+      const [productsRes, categoriesRes] = await Promise.all([
+        supabase.from('products').select('*').order('created_at', { ascending: false }),
+        supabase.from('categories').select('id, name').order('name')
+      ]);
+
+      if (productsRes.data) setProducts(productsRes.data);
+      if (categoriesRes.data) setCategories(categoriesRes.data);
+      setLoading(false);
+    }
+    loadInitialData();
+  }, []);
 
   const handleOpenModal = (product?: Product) => {
     if (product) {
@@ -144,7 +152,7 @@ export default function Products() {
       await Promise.all(uploadPromises);
     }
 
-    await fetchData();
+    await refreshData();
     setUploading(false);
     setShowModal(false);
   };

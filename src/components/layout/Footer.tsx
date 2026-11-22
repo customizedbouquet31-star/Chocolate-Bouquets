@@ -22,8 +22,8 @@ export default function Footer() {
           <a href="https://www.instagram.com/customized_bouquets31?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw==" target="_blank" rel="noreferrer" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium flex items-center gap-2">
             Instagram: @customized_bouquets31
           </a>
-          <a href="mailto:hello@placeholder.com" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium flex items-center gap-2">
-            Email: [hello@placeholder.com]
+          <a href="mailto:support@thechocolatebouquets.in" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium flex items-center gap-2">
+            Email: support@thechocolatebouquets.in
           </a>
         </div>
 
@@ -35,9 +35,9 @@ export default function Footer() {
             <a href="/collection/chocolate-bouquets" className="hover:text-primary transition-colors">Chocolate Bouquets</a>
             <a href="/collection/mens-hampers" className="hover:text-primary transition-colors">Men's Hampers</a>
             <a href="/collection/womens-hampers" className="hover:text-primary transition-colors">Women's Hampers</a>
-            <a href="/collection/festival-finds" className="hover:text-primary transition-colors">Festival Finds</a>
+            <a href="/collection/festive-finds" className="hover:text-primary transition-colors">Festive Finds</a>
             <a href="/collection/theme-bouquets" className="hover:text-primary transition-colors">Theme Bouquets</a>
-            <a href="/collection/polaroid-photo-bouquets" className="hover:text-primary transition-colors">Polaroid Photo Bouquets</a>
+            <a href="/collection/polaroid-photo-bouquet" className="hover:text-primary transition-colors">Polaroid Photo Bouquets</a>
           </nav>
         </div>
 

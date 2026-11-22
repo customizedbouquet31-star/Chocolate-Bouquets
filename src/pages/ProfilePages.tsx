@@ -3,6 +3,7 @@ import { PackageSearch, HeartCrack, Map, CreditCard } from 'lucide-react';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useAuth } from '../contexts/AuthContext';
 import ProductCard from '../components/product/ProductCard';
+import type { Address, SavedCard } from '../types';
 
 export function ProfileOrders() {
   return (
@@ -58,7 +59,7 @@ export function ProfileAddresses() {
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({ name: '', street: '', city: '', state: '', pincode: '', phone: '' });
 
-  const addresses = (user?.user_metadata?.addresses || []) as any[];
+  const addresses = (user?.user_metadata?.addresses || []) as Address[];
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,7 +136,7 @@ export function ProfileCards() {
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({ nameOnCard: '', cardNumber: '', expiry: '' });
 
-  const cards = (user?.user_metadata?.cards || []) as any[];
+  const cards = (user?.user_metadata?.cards || []) as SavedCard[];
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();

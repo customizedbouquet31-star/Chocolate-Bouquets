@@ -15,17 +15,15 @@ export default function Orders() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    async function fetchOrders() {
+      const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+      if (!error && data) {
+        setOrders(data);
+      }
+      setLoading(false);
+    }
     fetchOrders();
   }, []);
-
-  const fetchOrders = async () => {
-    setLoading(true);
-    const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
-    if (!error && data) {
-      setOrders(data);
-    }
-    setLoading(false);
-  };
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', id);

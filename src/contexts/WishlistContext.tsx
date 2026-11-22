@@ -16,7 +16,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     try {
       const saved = localStorage.getItem('chocolate_bouquet_wishlist');
       return saved ? JSON.parse(saved) : [];
-    } catch (e) {
+    } catch {
       return [];
     }
   });
@@ -47,6 +47,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useWishlist() {
   const context = useContext(WishlistContext);
   if (context === undefined) {

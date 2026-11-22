@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { X, ShoppingBag, Minus, Plus, Trash2, ArrowRight, MapPin, ChevronLeft } from 'lucide-react';
+import { X, ShoppingBag, Minus, Plus, Trash2, ArrowRight, MapPin, ChevronLeft, MessageCircle } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { Address } from '../../types';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -16,7 +17,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'address'>('cart');
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
 
-  const addresses = (user?.user_metadata?.addresses || []) as any[];
+  const addresses = (user?.user_metadata?.addresses || []) as Address[];
 
   let discountPercent = 0;
   let appliedCode = '';
@@ -50,9 +51,34 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       alert('Please select a delivery address');
       return;
     }
-    
-    // TODO: Integrate Razorpay here
-    alert('Razorpay checkout integration pending.');
+
+    const addr = addresses.find(a => a.id === selectedAddress);
+    const addressStr = addr 
+      ? `${addr.name}, ${addr.street}, ${addr.city}, ${addr.state} - ${addr.pincode} (Phone: ${addr.phone})`
+      : 'Address details provided in profile';
+
+    const itemsSummary = items
+      .map((item, idx) => `${idx + 1}. ${item.product.name} (Qty: ${item.quantity}) - Rs. ${item.product.price * item.quantity}`)
+      .join('\n');
+
+    const couponNote = appliedCode ? `\nApplied Coupon: ${appliedCode} (-Rs. ${discountAmount})` : '';
+
+    const waMsg = `Hello! I would like to place an order from The Chocolate Bouquet:%0A%0A*Order Items:*%0A${encodeURIComponent(itemsSummary)}%0A${encodeURIComponent(couponNote)}%0A*Total Payable:* Rs. ${finalPrice}%0A%0A*Delivery Address:*%0A${encodeURIComponent(addressStr)}%0A%0APlease confirm my order and share payment details!`;
+
+    window.open(`https://wa.me/919315274580?text=${waMsg}`, '_blank');
+  };
+
+  const handleQuickWhatsAppOrder = () => {
+    if (items.length === 0) return;
+    const itemsSummary = items
+      .map((item, idx) => `${idx + 1}. ${item.product.name} (Qty: ${item.quantity}) - Rs. ${item.product.price * item.quantity}`)
+      .join('\n');
+
+    const couponNote = appliedCode ? `\nApplied Coupon: ${appliedCode} (-Rs. ${discountAmount})` : '';
+
+    const waMsg = `Hello! I would like to order the following items from The Chocolate Bouquet:%0A%0A*Items:*%0A${encodeURIComponent(itemsSummary)}%0A${encodeURIComponent(couponNote)}%0A*Total:* Rs. ${finalPrice}%0A%0APlease let me know the delivery timeframe and payment details!`;
+
+    window.open(`https://wa.me/919315274580?text=${waMsg}`, '_blank');
   };
 
   const handleClose = () => {
@@ -337,20 +363,32 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     </div>
                   </div>
 
-                  <p className="text-[11px] font-medium tracking-wide text-plum-900/50 mb-6 text-center">
+                  <p className="text-[11px] font-medium tracking-wide text-plum-900/50 mb-4 text-center">
                     Taxes and shipping calculated at checkout
                   </p>
                   
-                  <button 
-                    onClick={handleCheckout}
-                    className="w-full py-4 relative overflow-hidden group bg-gradient-to-r from-primary to-plum-900 text-white font-bold tracking-widest text-sm uppercase rounded-[1.25rem] shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all transform hover:-translate-y-1"
-                  >
-                    <div className="absolute inset-0 w-full h-full bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out skew-x-12"></div>
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      {checkoutStep === 'cart' ? (user ? 'Proceed to Checkout' : 'Login to Checkout') : 'Pay Now'}
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </span>
-                  </button>
+                  <div className="flex flex-col gap-2.5">
+                    <button 
+                      onClick={handleCheckout}
+                      className="w-full py-4 relative overflow-hidden group bg-gradient-to-r from-primary to-plum-900 text-white font-bold tracking-widest text-sm uppercase rounded-[1.25rem] shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all transform hover:-translate-y-1"
+                    >
+                      <div className="absolute inset-0 w-full h-full bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out skew-x-12"></div>
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        {checkoutStep === 'cart' ? (user ? 'Proceed to Delivery Details' : 'Login to Checkout') : 'Confirm & Order via WhatsApp'}
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </span>
+                    </button>
+
+                    {checkoutStep === 'cart' && (
+                      <button 
+                        onClick={handleQuickWhatsAppOrder}
+                        className="w-full py-3.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100/80 border border-emerald-200/60 font-bold tracking-wider text-xs uppercase rounded-[1.25rem] transition-all flex items-center justify-center gap-2"
+                      >
+                        <MessageCircle className="w-4 h-4 text-emerald-600" />
+                        Quick Order on WhatsApp
+                      </button>
+                    )}
+                  </div>
                 </div>
               </>
             )}

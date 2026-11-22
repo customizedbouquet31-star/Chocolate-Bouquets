@@ -17,17 +17,15 @@ export default function Categories() {
   const [newName, setNewName] = useState('');
 
   useEffect(() => {
+    async function fetchCategories() {
+      const { data, error } = await supabase.from('categories').select('*').order('created_at', { ascending: false });
+      if (!error && data) {
+        setCategories(data);
+      }
+      setLoading(false);
+    }
     fetchCategories();
   }, []);
-
-  const fetchCategories = async () => {
-    setLoading(true);
-    const { data, error } = await supabase.from('categories').select('*').order('created_at', { ascending: false });
-    if (!error && data) {
-      setCategories(data);
-    }
-    setLoading(false);
-  };
 
   const generateSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, X, Heart } from 'lucide-react';
 
@@ -10,35 +10,39 @@ const CRAFT_STEPS = [
 ];
 
 export default function SplashScreen() {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    if (window.location.pathname.startsWith('/admin')) return false;
+    try {
+      const hasShown = sessionStorage.getItem('tcb_splash_shown');
+      const forceSplash = new URLSearchParams(window.location.search).has('splash');
+      if (hasShown && !forceSplash) {
+        return false;
+      }
+      sessionStorage.setItem('tcb_splash_shown', 'true');
+      return true;
+    } catch {
+      return true;
+    }
+  });
+
   const [isExiting, setIsExiting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stepIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const triggerExit = useCallback(() => {
+    setIsExiting(true);
+    document.body.style.overflow = '';
+    document.body.classList.remove('splash-active');
+
+    setTimeout(() => {
+      setIsVisible(false);
+    }, 850);
+  }, []);
+
   useEffect(() => {
-    // Avoid running on admin dashboard pages
-    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
-      return;
-    }
-
-    // Check if splash has already been shown in this visit/session
-    try {
-      const hasShown = sessionStorage.getItem('tcb_splash_shown');
-      const forceSplash = new URLSearchParams(window.location.search).has('splash');
-
-      if (hasShown && !forceSplash) {
-        return;
-      }
-
-      // Mark as shown so refreshes and sub-pages won't show it again
-      sessionStorage.setItem('tcb_splash_shown', 'true');
-    } catch {
-      // Fallback for restricted storage environments
-    }
-
-    // Activate for first-time opening
-    setIsVisible(true);
+    if (!isVisible) return;
 
     // Prevent background scrolling while splash is active
     document.body.style.overflow = 'hidden';
@@ -70,17 +74,7 @@ export default function SplashScreen() {
       document.body.style.overflow = '';
       document.body.classList.remove('splash-active');
     };
-  }, []);
-
-  const triggerExit = () => {
-    setIsExiting(true);
-    document.body.style.overflow = '';
-    document.body.classList.remove('splash-active');
-
-    setTimeout(() => {
-      setIsVisible(false);
-    }, 850);
-  };
+  }, [isVisible, triggerExit]);
 
   if (!isVisible) {
     return null;

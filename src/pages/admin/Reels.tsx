@@ -22,17 +22,15 @@ export default function Reels() {
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
+    async function fetchReels() {
+      const { data, error } = await supabase.from('reels').select('*').order('created_at', { ascending: false });
+      if (!error && data) {
+        setReels(data);
+      }
+      setLoading(false);
+    }
     fetchReels();
   }, []);
-
-  const fetchReels = async () => {
-    setLoading(true);
-    const { data, error } = await supabase.from('reels').select('*').order('created_at', { ascending: false });
-    if (!error && data) {
-      setReels(data);
-    }
-    setLoading(false);
-  };
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,8 +64,12 @@ export default function Reels() {
         setFormData({ description: '' });
         setVideoFile(null);
       }
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert('An unexpected error occurred during upload.');
+      }
     } finally {
       setUploading(false);
     }

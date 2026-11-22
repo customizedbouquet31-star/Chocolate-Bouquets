@@ -8,7 +8,7 @@ interface AuthContextType {
   loading: boolean;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
-  updateUserMetadata: (metadata: any) => Promise<void>;
+  updateUserMetadata: (metadata: Record<string, unknown>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const updateUserMetadata = async (metadata: any) => {
+  const updateUserMetadata = async (metadata: Record<string, unknown>) => {
     const { data, error } = await supabase.auth.updateUser({
       data: metadata
     });
@@ -60,6 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {

@@ -195,9 +195,9 @@ export default function Collection() {
 
   const scrollToSection = (id: string, sectionKey: string) => {
     if (isChocolateBouquets) {
-      setActiveSection(sectionKey as any);
+      setActiveSection(sectionKey as 'all' | 'chocolate' | 'mens' | 'womens');
     } else if (isFlowerBouquets) {
-      setActiveFlowerSection(sectionKey as any);
+      setActiveFlowerSection(sectionKey as 'all' | 'artificial' | 'fresh');
     }
     const element = document.getElementById(id);
     if (element) {

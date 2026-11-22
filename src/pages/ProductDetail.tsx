@@ -2,11 +2,15 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Heart, Minus, Plus, MessageCircle, MapPin, Star } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import type { Product } from '../types';
+import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
+import type { Product, ProductImage } from '../types';
 
 export default function ProductDetail() {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
+  const { addToCart, setIsCartOpen } = useCart();
+  const { isWishlisted, addToWishlist, removeFromWishlist } = useWishlist();
   
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -14,6 +18,7 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState('');
   const [pincode, setPincode] = useState('');
+  const [deliveryStatus, setDeliveryStatus] = useState<string | null>(null);
   
   useEffect(() => {
     async function fetchProduct() {
@@ -28,7 +33,7 @@ export default function ProductDetail() {
         if (data) {
           setProduct(data);
           setActiveImage(
-            data.product_images?.find((i: any) => i.is_primary)?.image_url || 
+            data.product_images?.find((i: ProductImage) => i.is_primary)?.image_url || 
             data.product_images?.[0]?.image_url || 
             'https://via.placeholder.com/600x800?text=No+Image'
           );
@@ -52,10 +57,39 @@ export default function ProductDetail() {
   
   if (!product) return null;
 
+  const isFavorite = isWishlisted(product.id);
+
+  const handleAddToCart = () => {
+    for (let i = 0; i < quantity; i++) {
+      addToCart(product);
+    }
+    setIsCartOpen(true);
+  };
+
+  const handleToggleWishlist = () => {
+    if (isFavorite) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
+    }
+  };
+
+  const handleCheckDelivery = () => {
+    const clean = pincode.trim();
+    if (/^\d{6}$/.test(clean)) {
+      setDeliveryStatus('✓ Standard Delivery (3-5 days) & Express available for this pincode.');
+    } else {
+      setDeliveryStatus('⚠ Please enter a valid 6-digit Indian PIN code.');
+    }
+  };
+
   const images = product.product_images?.map(i => i.image_url) || [activeImage];
   const originalPrice = product.original_price;
   const isNew = product.is_new;
   const isCustomizable = product.is_customizable;
+  const waCustomizeText = encodeURIComponent(
+    `Hi! I would like to customize the "${product.name}" (Price: Rs. ${product.price}). Here are my preferences:`
+  );
 
   return (
     <div className="pt-8 pb-20 md:pb-32 px-6">
@@ -127,16 +161,28 @@ export default function ProductDetail() {
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-plum-900/40" />
                     <input 
                       type="text" 
-                      placeholder="Enter Pincode" 
+                      placeholder="Enter 6-digit Pincode" 
                       value={pincode}
-                      onChange={e => setPincode(e.target.value)}
+                      maxLength={6}
+                      onChange={e => {
+                        setPincode(e.target.value);
+                        setDeliveryStatus(null);
+                      }}
                       className="w-full pl-10 pr-4 py-3 bg-lavender-50 border border-lavender-200 rounded-xl focus:outline-none focus:border-primary text-plum-950"
                     />
                   </div>
-                  <button className="px-6 py-3 bg-white border border-lavender-200 rounded-xl font-bold text-plum-950 hover:bg-lavender-50 transition-colors">
+                  <button 
+                    onClick={handleCheckDelivery}
+                    className="px-6 py-3 bg-white border border-lavender-200 rounded-xl font-bold text-plum-950 hover:bg-lavender-50 transition-colors"
+                  >
                     CHECK
                   </button>
                 </div>
+                {deliveryStatus && (
+                  <p className={`text-xs font-semibold ${deliveryStatus.startsWith('✓') ? 'text-emerald-600' : 'text-amber-600'}`}>
+                    {deliveryStatus}
+                  </p>
+                )}
               </div>
 
               {/* Quantity */}
@@ -165,17 +211,24 @@ export default function ProductDetail() {
             {/* Actions */}
             <div className="flex flex-col gap-4 mb-10">
               <div className="flex gap-4">
-                <button className="flex-1 py-4 bg-plum-950 text-white font-bold tracking-wider rounded-full hover:bg-plum-900 shadow-xl shadow-plum-900/20 transition-all hover:-translate-y-1">
+                <button 
+                  onClick={handleAddToCart}
+                  className="flex-1 py-4 bg-plum-950 text-white font-bold tracking-wider rounded-full hover:bg-plum-900 shadow-xl shadow-plum-900/20 transition-all hover:-translate-y-1 active:scale-[0.99]"
+                >
                   ADD TO CART
                 </button>
-                <button className="p-4 bg-white border border-lavender-200 rounded-full text-plum-900 hover:text-red-500 hover:border-red-500 transition-colors">
-                  <Heart className="w-6 h-6" />
+                <button 
+                  onClick={handleToggleWishlist}
+                  className="p-4 bg-white border border-lavender-200 rounded-full text-plum-900 hover:text-red-500 hover:border-red-500 transition-colors"
+                  title={isFavorite ? 'Remove from wishlist' : 'Add to wishlist'}
+                >
+                  <Heart className={`w-6 h-6 transition-colors ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
                 </button>
               </div>
               
               {isCustomizable && (
                 <a 
-                  href="https://wa.me/919315274580"
+                  href={`https://wa.me/919315274580?text=${waCustomizeText}`}
                   target="_blank"
                   rel="noreferrer"
                   className="w-full flex items-center justify-center gap-2 py-4 bg-[#25D366]/10 text-[#128C7E] font-bold tracking-wider rounded-full hover:bg-[#25D366]/20 transition-colors border border-[#25D366]/20"
