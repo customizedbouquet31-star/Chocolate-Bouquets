@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
 import { supabase } from '../../lib/supabase';
+import { getCached, setCached } from '../../lib/cache';
 import type { Category } from '../../types';
 
 const DEFAULT_CATEGORIES: Category[] = [
@@ -17,8 +18,10 @@ const DEFAULT_CATEGORIES: Category[] = [
 ];
 
 export default function CategoryScroller() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>(() => {
+    return getCached<Category[]>('mapped_categories') || DEFAULT_CATEGORIES;
+  });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function fetchCategories() {
@@ -40,6 +43,7 @@ export default function CategoryScroller() {
             
             return { ...cat, image_url: customImg };
           });
+          setCached('mapped_categories', mappedData);
           setCategories(mappedData);
         } else {
           setCategories(DEFAULT_CATEGORIES);

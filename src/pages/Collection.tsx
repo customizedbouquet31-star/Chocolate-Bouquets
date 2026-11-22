@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import ProductGrid from '../components/product/ProductGrid';
 import { supabase } from '../lib/supabase';
+import { getCached, setCached } from '../lib/cache';
 import type { Product, Category } from '../types';
 
 
@@ -10,7 +11,7 @@ const ALL_COLLECTION_TABS = [
   { name: 'Flower Bouquets', slug: 'flower-bouquets', icon: '🌸' },
   { name: "Men's Hampers", slug: 'mens-hampers', icon: '🎁' },
   { name: "Women's Hampers", slug: 'womens-hampers', icon: '🎀' },
-  { name: 'Polaroid Bouquets', slug: 'polaroid-photo-bouquets', icon: '📸' },
+  { name: 'Polaroid Bouquets', slug: 'polaroid-photo-bouquet', icon: '📸' },
   { name: 'Theme Bouquets', slug: 'theme-bouquets', icon: '👑' },
   { name: 'Festive Finds', slug: 'festive-finds', icon: '🏮' },
   { name: 'Cards & Letters', slug: 'cards-letters', icon: '💌' },
@@ -20,7 +21,9 @@ export default function Collection() {
   const { categoryId } = useParams<{ categoryId: string }>(); // acts as slug
   const [products, setProducts] = useState<Product[]>([]);
   const [category, setCategory] = useState<Category | null>(null);
-  const [allCategoriesList, setAllCategoriesList] = useState<Category[]>([]);
+  const [allCategoriesList, setAllCategoriesList] = useState<Category[]>(() => {
+    return getCached<Category[]>('all_categories') || [];
+  });
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('featured');
   const [activeSection, setActiveSection] = useState<'all' | 'chocolate' | 'mens' | 'womens'>('all');
@@ -46,12 +49,36 @@ export default function Collection() {
 
   useEffect(() => {
     async function fetchCollection() {
-      setLoading(true);
-
-      // Fetch all categories for navigation
-      const { data: allCategories } = await supabase.from('categories').select('*').order('created_at', { ascending: true });
+      // 1. Categories lookup (cached for instant low latency)
+      let allCategories = getCached<Category[]>('all_categories');
+      if (!allCategories) {
+        const { data } = await supabase.from('categories').select('*').order('created_at', { ascending: true });
+        if (data) {
+          allCategories = data;
+          setCached('all_categories', data);
+        }
+      }
       if (allCategories) setAllCategoriesList(allCategories);
 
+      // 2. Products lookup (cached for zero-latency instant navigation)
+      let allProds = getCached<Product[]>('all_products');
+      if (!allProds) {
+        const { data } = await supabase
+          .from('products')
+          .select('*, product_images(image_url, is_primary)')
+          .order('created_at', { ascending: false });
+        if (data) {
+          allProds = data;
+          setCached('all_products', data);
+        }
+      }
+
+      const dbProds = allProds || [];
+      const isNotPlaceholder = (p: Product) => {
+        const img = p.product_images?.[0]?.image_url || '';
+        return !img.includes('images.unsplash.com/photo-1549465220-1a8b9238cd48');
+      };
+      const validDbProds = dbProds.filter(isNotPlaceholder);
 
       if (isChocolateBouquets) {
         const chocCat = allCategories?.find(c => c.slug === 'chocolate-bouquets');
@@ -59,22 +86,6 @@ export default function Collection() {
         const womensCat = allCategories?.find(c => c.slug.includes('women'));
 
         setCategory(chocCat || { id: 'choc', name: 'Chocolate Bouquets', slug: 'chocolate-bouquets' });
-
-        // Fetch all products with images
-        const { data: allProds } = await supabase
-          .from('products')
-          .select('*, product_images(image_url, is_primary)')
-          .order('created_at', { ascending: false });
-
-        const dbProds = allProds || [];
-
-        // Filter out old placeholder images that used the generic test image
-        const isNotPlaceholder = (p: Product) => {
-          const img = p.product_images?.[0]?.image_url || '';
-          return !img.includes('images.unsplash.com/photo-1549465220-1a8b9238cd48');
-        };
-
-        const validDbProds = dbProds.filter(isNotPlaceholder);
 
         // Helper classification functions
         const isWomen = (p: Product) => {
@@ -115,17 +126,6 @@ export default function Collection() {
         const flowerCat = allCategories?.find(c => c.slug === 'flower-bouquets');
         setCategory(flowerCat || { id: 'ca82cdd8-bfa1-4924-b435-5e0d219ff81a', name: 'Flower Bouquets', slug: 'flower-bouquets' });
 
-        const { data: allProds } = await supabase
-          .from('products')
-          .select('*, product_images(image_url, is_primary)')
-          .order('created_at', { ascending: false });
-
-        const dbProds = allProds || [];
-        const isNotPlaceholder = (p: Product) => {
-          const img = p.product_images?.[0]?.image_url || '';
-          return !img.includes('images.unsplash.com/photo-1549465220-1a8b9238cd48');
-        };
-        const validDbProds = dbProds.filter(isNotPlaceholder);
         const flowerDbProds = flowerCat ? validDbProds.filter(p => p.category_id === flowerCat.id) : [];
 
         const isArtificial = (p: Product) => {
@@ -143,13 +143,7 @@ export default function Collection() {
 
       } else {
         // Standard category fetch
-        const { data: catData } = await supabase
-          .from('categories')
-          .select('*')
-          .eq('slug', categoryId)
-          .single();
-          
-        const activeCat = catData || allCategories?.find(c => {
+        const activeCat = allCategories?.find(c => {
           const catClean = c.slug.toLowerCase().replace(/s$/, '').replace(/-/g, '');
           const queryClean = categoryId?.toLowerCase().replace(/s$/, '').replace(/-/g, '') || '';
           return catClean === queryClean || catClean.includes(queryClean) || queryClean.includes(catClean);
@@ -157,19 +151,8 @@ export default function Collection() {
 
         if (activeCat) {
           setCategory(activeCat);
-          const { data: prodData } = await supabase
-            .from('products')
-            .select('*, product_images(image_url, is_primary)')
-            .eq('category_id', activeCat.id)
-            .order('created_at', { ascending: false });
-            
-          const dbProds = prodData || [];
-          const isNotPlaceholder = (p: Product) => {
-            const img = p.product_images?.[0]?.image_url || '';
-            return !img.includes('images.unsplash.com/photo-1549465220-1a8b9238cd48');
-          };
-          const validDbProds = dbProds.filter(isNotPlaceholder);
-          setProducts(validDbProds);
+          const catProds = validDbProds.filter(p => p.category_id === activeCat.id);
+          setProducts(catProds);
         } else {
           // Fallback if category slug doesn't exist in DB
           setProducts([]);

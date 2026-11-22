@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Play, ArrowRight } from 'lucide-react';
 import { InstagramIcon } from '../icons/InstagramIcon';
 import { supabase } from '../../lib/supabase';
+import { getCached, setCached } from '../../lib/cache';
 import type { Reel } from '../../types';
 
 function VideoPlayer({ reel, playingId, setPlayingId }: { reel: Reel, playingId: string | null, setPlayingId: (id: string | null) => void }) {
@@ -63,13 +64,18 @@ function VideoPlayer({ reel, playingId, setPlayingId }: { reel: Reel, playingId:
 }
 
 export default function InstagramReels() {
-  const [reels, setReels] = useState<Reel[]>([]);
+  const [reels, setReels] = useState<Reel[]>(() => {
+    return getCached<Reel[]>('home_reels') || [];
+  });
   const [playingId, setPlayingId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchReels() {
       const { data } = await supabase.from('reels').select('*').limit(10).order('created_at', { ascending: false });
-      if (data) setReels(data);
+      if (data) {
+        setCached('home_reels', data);
+        setReels(data);
+      }
     }
     fetchReels();
   }, []);

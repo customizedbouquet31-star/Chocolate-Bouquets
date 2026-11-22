@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Check, ChevronDown, X } from 'lucide-react';
 import ProductGrid from '../components/product/ProductGrid';
 import { supabase } from '../lib/supabase';
+import { getCached, setCached } from '../lib/cache';
 import type { Product, Category } from '../types';
 
 const sortOptions = [
@@ -15,9 +16,13 @@ const sortOptions = [
 
 export default function Shop() {
   const [sort, setSort] = useState('featured');
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(() => {
+    return getCached<Product[]>('all_products') || [];
+  });
+  const [categories, setCategories] = useState<Category[]>(() => {
+    return getCached<Category[]>('all_categories') || [];
+  });
+  const [loading, setLoading] = useState(() => !getCached<Product[]>('all_products'));
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -31,7 +36,6 @@ export default function Shop() {
 
   useEffect(() => {
     async function fetchData() {
-      setLoading(true);
       try {
         const [productsRes, categoriesRes] = await Promise.all([
           supabase
@@ -42,9 +46,11 @@ export default function Shop() {
         ]);
 
         if (productsRes.data) {
+          setCached('all_products', productsRes.data);
           setProducts(productsRes.data);
         }
         if (categoriesRes.data) {
+          setCached('all_categories', categoriesRes.data);
           setCategories(categoriesRes.data);
         }
       } catch (err) {

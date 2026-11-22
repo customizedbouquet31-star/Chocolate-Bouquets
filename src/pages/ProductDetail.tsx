@@ -4,6 +4,7 @@ import { Heart, Minus, Plus, MessageCircle, MapPin, Star } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
+import { getCached } from '../lib/cache';
 import type { Product, ProductImage } from '../types';
 
 export default function ProductDetail() {
@@ -12,17 +13,28 @@ export default function ProductDetail() {
   const { addToCart, setIsCartOpen } = useCart();
   const { isWishlisted, addToWishlist, removeFromWishlist } = useWishlist();
   
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
+  const cachedProds = getCached<Product[]>('all_products');
+  const cachedItem = cachedProds?.find(p => p.id === productId);
+
+  const [product, setProduct] = useState<Product | null>(cachedItem || null);
+  const [loading, setLoading] = useState(!cachedItem);
 
   const [quantity, setQuantity] = useState(1);
-  const [activeImage, setActiveImage] = useState('');
+  const [activeImage, setActiveImage] = useState(() => {
+    if (cachedItem) {
+      return (
+        cachedItem.product_images?.find((i: ProductImage) => i.is_primary)?.image_url || 
+        cachedItem.product_images?.[0]?.image_url || 
+        'https://via.placeholder.com/600x800?text=No+Image'
+      );
+    }
+    return '';
+  });
   const [pincode, setPincode] = useState('');
   const [deliveryStatus, setDeliveryStatus] = useState<string | null>(null);
   
   useEffect(() => {
     async function fetchProduct() {
-      setLoading(true);
       try {
         const { data, error } = await supabase
           .from('products')
@@ -37,19 +49,19 @@ export default function ProductDetail() {
             data.product_images?.[0]?.image_url || 
             'https://via.placeholder.com/600x800?text=No+Image'
           );
-        } else {
+        } else if (!cachedItem) {
           console.warn('Product not found in database:', productId, error);
           navigate('/shop');
         }
       } catch (err) {
         console.error('Error fetching product:', err);
-        navigate('/shop');
+        if (!cachedItem) navigate('/shop');
       } finally {
         setLoading(false);
       }
     }
     if (productId) fetchProduct();
-  }, [productId, navigate]);
+  }, [productId, navigate, cachedItem]);
 
   if (loading) {
     return <div className="pt-24 pb-20 text-center">Loading product...</div>;
