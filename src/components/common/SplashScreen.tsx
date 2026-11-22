@@ -22,7 +22,22 @@ export default function SplashScreen() {
       return;
     }
 
-    // Activate for all devices (Mobile, Tablet, Desktop)
+    // Check if splash has already been shown in this visit/session
+    try {
+      const hasShown = sessionStorage.getItem('tcb_splash_shown');
+      const forceSplash = new URLSearchParams(window.location.search).has('splash');
+
+      if (hasShown && !forceSplash) {
+        return;
+      }
+
+      // Mark as shown so refreshes and sub-pages won't show it again
+      sessionStorage.setItem('tcb_splash_shown', 'true');
+    } catch {
+      // Fallback for restricted storage environments
+    }
+
+    // Activate for first-time opening
     setIsVisible(true);
 
     // Prevent background scrolling while splash is active
