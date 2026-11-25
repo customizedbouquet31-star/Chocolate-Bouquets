@@ -64,7 +64,7 @@ export default function Header({ onCartClick }: { onCartClick: () => void }) {
           </div>
 
           {/* Dynamic Logo */}
-          <a href="/" className="flex items-center justify-center md:justify-start z-10 flex-shrink-0">
+          <Link to="/" className="flex items-center justify-center md:justify-start z-10 flex-shrink-0">
             <div className="font-serif font-bold text-plum-950 text-center md:text-left transition-all duration-300">
               {isScrolled ? (
                 <div className="text-xl md:text-2xl tracking-widest block font-black">TCB.</div>
@@ -74,7 +74,7 @@ export default function Header({ onCartClick }: { onCartClick: () => void }) {
                 </div>
               )}
             </div>
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center justify-center flex-1 mx-4 lg:mx-8">

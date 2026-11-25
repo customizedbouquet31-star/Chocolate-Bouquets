@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
@@ -96,9 +97,9 @@ export default function CategoryScroller() {
               const cardBg = bgGradients[index % bgGradients.length];
 
               return (
-                <a
+                <Link
                   key={category.id}
-                  href={`/collection/${category.slug}`}
+                  to={`/collection/${category.slug}`}
                   className={`flex-none w-[45vw] md:w-[220px] lg:w-auto flex flex-col aspect-[4/5] rounded-xl relative overflow-hidden group shadow-md hover:shadow-xl transition-all hover:-translate-y-1 ${cardBg} p-2 md:p-3 snap-center lg:snap-align-none`}
                 >
                   <div className="absolute top-2 md:top-3 left-2 right-2 md:left-3 md:right-3 bg-white py-2 px-1 rounded shadow-md text-center z-20 group-hover:bg-plum-950 transition-colors">
@@ -118,7 +119,7 @@ export default function CategoryScroller() {
                       />
                     )}
                   </div>
-                </a>
+                </Link>
               );
             })
           )}

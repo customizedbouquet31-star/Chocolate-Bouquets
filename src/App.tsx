@@ -18,6 +18,7 @@ const ProfileOrders = lazy(() => import('./pages/ProfilePages').then(m => ({ def
 const ProfileWishlist = lazy(() => import('./pages/ProfilePages').then(m => ({ default: m.ProfileWishlist })));
 const ProfileAddresses = lazy(() => import('./pages/ProfilePages').then(m => ({ default: m.ProfileAddresses })));
 const ProfileCards = lazy(() => import('./pages/ProfilePages').then(m => ({ default: m.ProfileCards })));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Admin lazy routes
 const Login = lazy(() => import('./pages/admin/Login'));
@@ -52,6 +53,7 @@ function App() {
                   <Route path="addresses" element={<ProfileAddresses />} />
                   <Route path="cards" element={<ProfileCards />} />
                 </Route>
+                <Route path="*" element={<NotFound />} />
               </Route>
               
               <Route path="/login" element={<CustomerLogin />} />

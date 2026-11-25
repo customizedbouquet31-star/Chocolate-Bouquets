@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { X, ShoppingBag, Minus, Plus, Trash2, ArrowRight, MapPin, ChevronLeft, MessageCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { X, ShoppingBag, Minus, Plus, Trash2, ArrowRight, MapPin, ChevronLeft, MessageCircle, Loader2 } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Address } from '../../types';
 
@@ -11,11 +13,12 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const { items, updateQuantity, removeFromCart, totalPrice, totalItems } = useCart();
+  const { items, updateQuantity, removeFromCart, clearCart, totalPrice, totalItems } = useCart();
   const { user, signInWithGoogle } = useAuth();
   
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'address'>('cart');
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const addresses = (user?.user_metadata?.addresses || []) as Address[];
 
@@ -36,7 +39,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const discountAmount = Math.round((totalPrice * discountPercent) / 100);
   const finalPrice = totalPrice - discountAmount;
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (!user) {
       signInWithGoogle();
       return;
@@ -52,20 +55,64 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       return;
     }
 
+    setIsSubmitting(true);
+
     const addr = addresses.find(a => a.id === selectedAddress);
     const addressStr = addr 
       ? `${addr.name}, ${addr.street}, ${addr.city}, ${addr.state} - ${addr.pincode} (Phone: ${addr.phone})`
       : 'Address details provided in profile';
+
+    let orderRef = '';
+
+    try {
+      const orderPayload = {
+        customer_name: addr?.name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Customer',
+        customer_phone: addr?.phone || '',
+        customer_email: user.email || null,
+        delivery_address: addressStr,
+        total_amount: finalPrice,
+        status: 'pending'
+      };
+
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .insert([orderPayload])
+        .select();
+
+      if (orderError) {
+        console.warn('Could not save order to database:', orderError.message);
+      } else if (orderData && orderData[0]) {
+        const orderId = orderData[0].id;
+        orderRef = `#${orderId.slice(0, 8).toUpperCase()}`;
+
+        const itemsPayload = items.map(item => ({
+          order_id: orderId,
+          product_id: item.product.id,
+          quantity: item.quantity,
+          price_at_time: item.product.price,
+          customization_details: appliedCode ? `Coupon: ${appliedCode}` : null
+        }));
+
+        await supabase.from('order_items').insert(itemsPayload);
+      }
+    } catch (e) {
+      console.warn('Error recording order to database:', e);
+    } finally {
+      setIsSubmitting(false);
+    }
 
     const itemsSummary = items
       .map((item, idx) => `${idx + 1}. ${item.product.name} (Qty: ${item.quantity}) - Rs. ${item.product.price * item.quantity}`)
       .join('\n');
 
     const couponNote = appliedCode ? `\nApplied Coupon: ${appliedCode} (-Rs. ${discountAmount})` : '';
+    const refNote = orderRef ? `*Order Reference:* ${orderRef}%0A` : '';
 
-    const waMsg = `Hello! I would like to place an order from The Chocolate Bouquet:%0A%0A*Order Items:*%0A${encodeURIComponent(itemsSummary)}%0A${encodeURIComponent(couponNote)}%0A*Total Payable:* Rs. ${finalPrice}%0A%0A*Delivery Address:*%0A${encodeURIComponent(addressStr)}%0A%0APlease confirm my order and share payment details!`;
+    const waMsg = `Hello! I would like to place an order from The Chocolate Bouquet:%0A%0A${refNote}*Order Items:*%0A${encodeURIComponent(itemsSummary)}%0A${encodeURIComponent(couponNote)}%0A*Total Payable:* Rs. ${finalPrice}%0A%0A*Delivery Address:*%0A${encodeURIComponent(addressStr)}%0A%0APlease confirm my order and share payment details!`;
 
     window.open(`https://wa.me/919315274580?text=${waMsg}`, '_blank');
+    clearCart();
+    handleClose();
   };
 
   const handleQuickWhatsAppOrder = () => {
@@ -302,9 +349,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         <div className="p-8 text-center border-2 border-dashed border-lavender-200 rounded-2xl bg-white flex flex-col items-center">
                           <MapPin className="w-10 h-10 text-primary/40 mb-3" />
                           <p className="text-plum-900/60 mb-6 font-medium">You have no saved addresses yet.</p>
-                          <a href="/profile/addresses" onClick={handleClose} className="px-6 py-3 bg-primary text-white font-bold rounded-full shadow-md text-sm tracking-wider hover:bg-primary-hover transition-colors">
+                          <Link to="/profile/addresses" onClick={handleClose} className="px-6 py-3 bg-primary text-white font-bold rounded-full shadow-md text-sm tracking-wider hover:bg-primary-hover transition-colors">
                             ADD NEW ADDRESS
-                          </a>
+                          </Link>
                         </div>
                       ) : (
                         addresses.map(addr => (
@@ -370,12 +417,22 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   <div className="flex flex-col gap-2.5">
                     <button 
                       onClick={handleCheckout}
-                      className="w-full py-4 relative overflow-hidden group bg-gradient-to-r from-primary to-plum-900 text-white font-bold tracking-widest text-sm uppercase rounded-[1.25rem] shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all transform hover:-translate-y-1"
+                      disabled={isSubmitting}
+                      className="w-full py-4 relative overflow-hidden group bg-gradient-to-r from-primary to-plum-900 text-white font-bold tracking-widest text-sm uppercase rounded-[1.25rem] shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all transform hover:-translate-y-1 disabled:opacity-70 disabled:pointer-events-none"
                     >
                       <div className="absolute inset-0 w-full h-full bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out skew-x-12"></div>
                       <span className="relative z-10 flex items-center justify-center gap-2">
-                        {checkoutStep === 'cart' ? (user ? 'Proceed to Delivery Details' : 'Login to Checkout') : 'Confirm & Order via WhatsApp'}
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Processing Order...
+                          </>
+                        ) : (
+                          <>
+                            {checkoutStep === 'cart' ? (user ? 'Proceed to Delivery Details' : 'Login to Checkout') : 'Confirm & Order via WhatsApp'}
+                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                          </>
+                        )}
                       </span>
                     </button>
 

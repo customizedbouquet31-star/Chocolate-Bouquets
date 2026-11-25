@@ -41,7 +41,7 @@ export default function Dashboard() {
     { title: 'Total Orders', value: stats.orders, icon: ShoppingBag, color: 'text-blue-500', bg: 'bg-blue-50' },
     { title: 'Products', value: stats.products, icon: Package, color: 'text-purple-500', bg: 'bg-purple-50' },
     { title: 'Categories', value: stats.categories, icon: Tags, color: 'text-green-500', bg: 'bg-green-50' },
-    { title: 'Instagram Reels', value: stats.reels, icon: () => <InstagramIcon className="w-6 h-6 text-pink-500" />, color: 'text-pink-500', bg: 'bg-pink-50' },
+    { title: 'Instagram Reels', value: stats.reels, icon: InstagramIcon, color: 'text-pink-500', bg: 'bg-pink-50' },
   ];
 
   const refreshStats = async () => {

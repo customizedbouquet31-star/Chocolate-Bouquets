@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { LogIn } from 'lucide-react';
@@ -69,9 +69,9 @@ export default function CustomerLogin() {
         </button>
 
         <div className="mt-8 pt-8 border-t border-lavender-100/50 text-center">
-          <a href="/" className="text-sm text-plum-900/60 hover:text-primary transition-colors font-bold tracking-wide uppercase">
+          <Link to="/" className="text-sm text-plum-900/60 hover:text-primary transition-colors font-bold tracking-wide uppercase">
             &larr; Return to Store
-          </a>
+          </Link>
         </div>
       </motion.div>
     </div>

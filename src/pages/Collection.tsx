@@ -341,9 +341,9 @@ export default function Collection() {
                 ) : (
                   <div className="flex flex-row lg:flex-col gap-1.5 overflow-x-auto lg:overflow-visible hide-scrollbar pb-1 lg:pb-0">
                     {allCategoriesList.map((cat) => (
-                      <a
+                      <Link
                         key={cat.id}
-                        href={`/collection/${cat.slug}`}
+                        to={`/collection/${cat.slug}`}
                         className={`px-4 py-2.5 rounded-xl text-xs font-bold tracking-wider uppercase transition-all text-left flex-shrink-0 lg:flex-shrink block ${
                           cat.slug === categoryId
                             ? 'bg-plum-950 text-white shadow-sm'
@@ -351,7 +351,7 @@ export default function Collection() {
                         }`}
                       >
                         {cat.name}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 )}

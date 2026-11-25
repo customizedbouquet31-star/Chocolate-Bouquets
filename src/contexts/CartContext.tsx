@@ -10,7 +10,7 @@ interface CartItem {
 
 interface CartContextType {
   items: CartItem[];
-  addToCart: (product: Product) => void;
+  addToCart: (product: Product, quantity?: number) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -42,17 +42,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('cart', JSON.stringify(items));
   }, [items]);
 
-  const addToCart = (product: Product) => {
+  const addToCart = (product: Product, quantity: number = 1) => {
+    const qtyToAdd = Math.max(1, quantity);
     setItems(prev => {
       const existing = prev.find(item => item.product.id === product.id);
       if (existing) {
         return prev.map(item => 
           item.product.id === product.id 
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + qtyToAdd }
             : item
         );
       }
-      return [...prev, { product, quantity: 1 }];
+      return [...prev, { product, quantity: qtyToAdd }];
     });
     
     toast((t) => (
@@ -63,7 +64,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
           toast.dismiss(t.id); 
         }}
       >
-        <span className="flex-1"><b>{product.name}</b> added to cart!</span>
+        <span className="flex-1">
+          <b>{product.name}</b> {qtyToAdd > 1 ? `(x${qtyToAdd}) ` : ''}added to cart!
+        </span>
         <button className="text-primary font-bold text-[11px] uppercase tracking-wider bg-lavender-50 px-3 py-1.5 rounded-full hover:bg-lavender-100 transition-colors whitespace-nowrap">
           View Cart
         </button>

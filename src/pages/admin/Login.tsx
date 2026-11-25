@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { Lock } from 'lucide-react';
 
@@ -84,9 +84,9 @@ export default function Login() {
           </form>
           
           <div className="mt-8 pt-6 border-t border-lavender-100 text-center">
-            <a href="/" className="text-sm text-primary hover:underline font-medium">
+            <Link to="/" className="text-sm text-primary hover:underline font-medium">
               &larr; Back to Store
-            </a>
+            </Link>
           </div>
         </div>
       </div>

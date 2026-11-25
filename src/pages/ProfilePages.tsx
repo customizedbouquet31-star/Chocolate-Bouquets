@@ -1,23 +1,119 @@
-import { useState } from 'react';
-import { PackageSearch, HeartCrack, Map, CreditCard } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { PackageSearch, HeartCrack, Map, CreditCard, Clock, CheckCircle2, Truck, AlertCircle } from 'lucide-react';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 import ProductCard from '../components/product/ProductCard';
 import type { Address, SavedCard } from '../types';
 
+interface OrderRecord {
+  id: string;
+  customer_name: string;
+  customer_phone: string;
+  customer_email?: string;
+  delivery_address: string;
+  total_amount: number;
+  status: string;
+  created_at: string;
+}
+
 export function ProfileOrders() {
-  return (
-    <div className="flex flex-col items-center justify-center h-full text-center animate-in fade-in zoom-in duration-500">
-      <div className="w-24 h-24 bg-lavender-50 rounded-full flex items-center justify-center mb-6">
-        <PackageSearch className="w-10 h-10 text-primary" />
+  const { user } = useAuth();
+  const [orders, setOrders] = useState<OrderRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchOrders() {
+      if (!user?.email) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const { data, error } = await supabase
+          .from('orders')
+          .select('*')
+          .eq('customer_email', user.email)
+          .order('created_at', { ascending: false });
+
+        if (!error && data) {
+          setOrders(data);
+        }
+      } catch (err) {
+        console.error('Error fetching user orders:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchOrders();
+  }, [user]);
+
+  const getStatusBadge = (status: string) => {
+    switch(status) {
+      case 'confirmed':
+        return <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full"><CheckCircle2 className="w-3.5 h-3.5" /> Confirmed</span>;
+      case 'shipped':
+        return <span className="inline-flex items-center gap-1 px-3 py-1 bg-purple-50 text-purple-700 text-xs font-bold rounded-full"><Truck className="w-3.5 h-3.5" /> Shipped</span>;
+      case 'delivered':
+        return <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full"><CheckCircle2 className="w-3.5 h-3.5" /> Delivered</span>;
+      case 'cancelled':
+        return <span className="inline-flex items-center gap-1 px-3 py-1 bg-rose-50 text-rose-700 text-xs font-bold rounded-full"><AlertCircle className="w-3.5 h-3.5" /> Cancelled</span>;
+      default:
+        return <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-50 text-amber-700 text-xs font-bold rounded-full"><Clock className="w-3.5 h-3.5" /> Pending</span>;
+    }
+  };
+
+  if (loading) {
+    return <div className="p-8 text-center text-plum-900/60 font-medium">Loading your orders...</div>;
+  }
+
+  if (orders.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center animate-in fade-in zoom-in duration-500 py-12">
+        <div className="w-24 h-24 bg-lavender-50 rounded-full flex items-center justify-center mb-6">
+          <PackageSearch className="w-10 h-10 text-primary" />
+        </div>
+        <h2 className="text-2xl font-serif font-bold text-plum-950 mb-3">No Orders Yet</h2>
+        <p className="text-plum-900/60 max-w-sm mb-8">
+          Looks like you haven't placed any orders yet. Discover our handcrafted bouquets and hampers.
+        </p>
+        <Link to="/shop" className="px-8 py-3.5 bg-primary text-white font-bold tracking-wider rounded-full hover:bg-primary-hover shadow-md transition-transform transform hover:-translate-y-0.5">
+          START SHOPPING
+        </Link>
       </div>
-      <h2 className="text-2xl font-serif font-bold text-plum-950 mb-3">No Orders Yet</h2>
-      <p className="text-plum-900/60 max-w-sm mb-8">
-        Looks like you haven't placed any orders. Discover our beautiful bouquets and make someone's day special.
-      </p>
-      <a href="/shop" className="px-8 py-3.5 bg-primary text-white font-bold tracking-wider rounded-full hover:bg-primary-hover shadow-md transition-transform transform hover:-translate-y-0.5">
-        START SHOPPING
-      </a>
+    );
+  }
+
+  return (
+    <div className="animate-in fade-in duration-500">
+      <h2 className="text-2xl font-serif font-bold text-plum-950 mb-6">Order History</h2>
+      <div className="flex flex-col gap-4">
+        {orders.map((order) => (
+          <div key={order.id} className="p-5 md:p-6 bg-white rounded-2xl border border-lavender-100 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-lavender-100/60">
+              <div>
+                <span className="text-xs font-bold tracking-wider text-plum-900/50 uppercase">Order ID</span>
+                <p className="font-mono text-sm font-bold text-plum-950">#{order.id.slice(0, 8).toUpperCase()}</p>
+              </div>
+              <div>
+                <span className="text-xs font-bold tracking-wider text-plum-900/50 uppercase">Date</span>
+                <p className="text-sm font-medium text-plum-900/80">{new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+              </div>
+              <div>
+                <span className="text-xs font-bold tracking-wider text-plum-900/50 uppercase">Total</span>
+                <p className="text-base font-bold text-plum-950">Rs. {Number(order.total_amount).toLocaleString()}</p>
+              </div>
+              <div>
+                {getStatusBadge(order.status)}
+              </div>
+            </div>
+            <div className="pt-3 text-xs text-plum-900/70">
+              <span className="font-semibold text-plum-950">Delivery Address: </span>
+              {order.delivery_address}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -35,9 +131,9 @@ export function ProfileWishlist() {
         <p className="text-plum-900/60 max-w-sm mb-8">
           Save your favorite items here so you never lose track of them.
         </p>
-        <a href="/shop" className="px-8 py-3.5 bg-primary text-white font-bold tracking-wider rounded-full hover:bg-primary-hover shadow-md transition-transform transform hover:-translate-y-0.5">
+        <Link to="/shop" className="px-8 py-3.5 bg-primary text-white font-bold tracking-wider rounded-full hover:bg-primary-hover shadow-md transition-transform transform hover:-translate-y-0.5">
           EXPLORE PRODUCTS
-        </a>
+        </Link>
       </div>
     );
   }

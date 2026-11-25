@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import type { Product } from '../../types';
 import ProductGrid from '../product/ProductGrid';
@@ -51,9 +52,9 @@ export default function ProductCarousel({
       </div>
 
       <div className="flex items-center justify-center w-full mt-4">
-        <a href={viewAllLink} className="text-sm font-bold tracking-wider text-primary hover:text-plum-900 transition-colors flex items-center gap-2 group border-2 border-lavender-100 hover:border-primary px-8 py-3 rounded-full shadow-sm hover:shadow-md">
+        <Link to={viewAllLink} className="text-sm font-bold tracking-wider text-primary hover:text-plum-900 transition-colors flex items-center gap-2 group border-2 border-lavender-100 hover:border-primary px-8 py-3 rounded-full shadow-sm hover:shadow-md">
           VIEW ALL <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-        </a>
+        </Link>
       </div>
     </section>
   );

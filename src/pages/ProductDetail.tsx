@@ -25,7 +25,7 @@ export default function ProductDetail() {
       return (
         cachedItem.product_images?.find((i: ProductImage) => i.is_primary)?.image_url || 
         cachedItem.product_images?.[0]?.image_url || 
-        'https://via.placeholder.com/600x800?text=No+Image'
+        '/logo.png'
       );
     }
     return '';
@@ -47,7 +47,7 @@ export default function ProductDetail() {
           setActiveImage(
             data.product_images?.find((i: ProductImage) => i.is_primary)?.image_url || 
             data.product_images?.[0]?.image_url || 
-            'https://via.placeholder.com/600x800?text=No+Image'
+            '/logo.png'
           );
         } else if (!cachedItem) {
           console.warn('Product not found in database:', productId, error);
@@ -72,9 +72,7 @@ export default function ProductDetail() {
   const isFavorite = isWishlisted(product.id);
 
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      addToCart(product);
-    }
+    addToCart(product, quantity);
     setIsCartOpen(true);
   };
 

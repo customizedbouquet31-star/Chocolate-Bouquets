@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 export default function Hero() {
@@ -33,9 +34,9 @@ export default function Hero() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center md:justify-start -mt-2 md:mt-4">
-            <a href="/shop" className="w-full sm:w-auto px-8 py-3.5 bg-plum-950 text-white rounded-full font-bold tracking-wider hover:bg-plum-900 shadow-xl shadow-plum-900/20 transition-all hover:-translate-y-1 text-center">
+            <Link to="/shop" className="w-full sm:w-auto px-8 py-3.5 bg-plum-950 text-white rounded-full font-bold tracking-wider hover:bg-plum-900 shadow-xl shadow-plum-900/20 transition-all hover:-translate-y-1 text-center">
               SHOP NOW
-            </a>
+            </Link>
             <a href="https://wa.me/919315274580" target="_blank" rel="noreferrer" className="w-full sm:w-auto px-8 py-3.5 bg-white text-plum-950 border-2 border-lavender-100 rounded-full font-bold tracking-wider hover:border-primary hover:text-primary shadow-sm transition-all text-center">
               CUSTOMIZE YOURS
             </a>

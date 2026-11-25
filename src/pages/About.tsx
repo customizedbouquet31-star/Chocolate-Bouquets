@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 
@@ -94,10 +95,10 @@ export default function About() {
             </p>
             
             <div className="pt-8">
-              <a href="/shop" className="group relative inline-flex items-center justify-center px-10 py-4 font-bold tracking-widest text-white transition-all duration-300 bg-plum-950 rounded-full overflow-hidden">
+              <Link to="/shop" className="group relative inline-flex items-center justify-center px-10 py-4 font-bold tracking-widest text-white transition-all duration-300 bg-plum-950 rounded-full overflow-hidden">
                 <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-primary to-plum-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <span className="relative">DISCOVER COLLECTION</span>
-              </a>
+              </Link>
             </div>
           </motion.div>
           

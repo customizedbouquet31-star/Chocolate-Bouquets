@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function Footer() {
   return (
     <footer className="bg-lavender-100 pt-8 pb-4 px-6 md:px-12 mt-8 text-plum-900">
@@ -31,13 +33,13 @@ export default function Footer() {
         <div className="flex flex-col gap-4">
           <h3 className="font-serif font-bold text-lg tracking-wide mb-2">SHOP</h3>
           <nav className="flex flex-col gap-3 text-sm text-plum-900/80 font-medium">
-            <a href="/collection/flower-bouquets" className="hover:text-primary transition-colors">Flower Bouquets</a>
-            <a href="/collection/chocolate-bouquets" className="hover:text-primary transition-colors">Chocolate Bouquets</a>
-            <a href="/collection/mens-hampers" className="hover:text-primary transition-colors">Men's Hampers</a>
-            <a href="/collection/womens-hampers" className="hover:text-primary transition-colors">Women's Hampers</a>
-            <a href="/collection/festive-finds" className="hover:text-primary transition-colors">Festive Finds</a>
-            <a href="/collection/theme-bouquets" className="hover:text-primary transition-colors">Theme Bouquets</a>
-            <a href="/collection/polaroid-photo-bouquet" className="hover:text-primary transition-colors">Polaroid Photo Bouquets</a>
+            <Link to="/collection/flower-bouquets" className="hover:text-primary transition-colors">Flower Bouquets</Link>
+            <Link to="/collection/chocolate-bouquets" className="hover:text-primary transition-colors">Chocolate Bouquets</Link>
+            <Link to="/collection/mens-hampers" className="hover:text-primary transition-colors">Men's Hampers</Link>
+            <Link to="/collection/womens-hampers" className="hover:text-primary transition-colors">Women's Hampers</Link>
+            <Link to="/collection/festive-finds" className="hover:text-primary transition-colors">Festive Finds</Link>
+            <Link to="/collection/theme-bouquets" className="hover:text-primary transition-colors">Theme Bouquets</Link>
+            <Link to="/collection/polaroid-photo-bouquet" className="hover:text-primary transition-colors">Polaroid Photo Bouquets</Link>
           </nav>
         </div>
 
@@ -45,11 +47,11 @@ export default function Footer() {
         <div className="flex flex-col gap-4">
           <h3 className="font-serif font-bold text-lg tracking-wide mb-2">INFORMATION</h3>
           <nav className="flex flex-col gap-3 text-sm text-plum-900/80 font-medium">
-            <a href="/about" className="hover:text-primary transition-colors">About Us</a>
-            <a href="/contact" className="hover:text-primary transition-colors">Contact Us</a>
-            <a href="#shipping" className="hover:text-primary transition-colors">Pan-India Shipping</a>
-            <a href="#tracking" className="hover:text-primary transition-colors">Order Tracking</a>
-            <a href="#policy" className="hover:text-primary transition-colors">Privacy Policy</a>
+            <Link to="/about" className="hover:text-primary transition-colors">About Us</Link>
+            <Link to="/contact" className="hover:text-primary transition-colors">Contact Us</Link>
+            <Link to="/contact" className="hover:text-primary transition-colors">Pan-India Shipping</Link>
+            <Link to="/contact" className="hover:text-primary transition-colors">Order Tracking</Link>
+            <Link to="/contact" className="hover:text-primary transition-colors">Privacy Policy</Link>
           </nav>
         </div>
 

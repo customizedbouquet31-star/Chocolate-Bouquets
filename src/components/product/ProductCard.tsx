@@ -1,4 +1,5 @@
 import type { Product } from '../../types';
+import { Link } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext';
 import { useWishlist } from '../../contexts/WishlistContext';
 import { Heart, ShoppingBag } from 'lucide-react';
@@ -17,7 +18,7 @@ export default function ProductCard({ product, badge, size = 'default' }: Produc
   
   const primaryImage = product.product_images?.find(img => img.is_primary)?.image_url 
     || product.product_images?.[0]?.image_url 
-    || 'https://via.placeholder.com/400x400?text=No+Image';
+    || '/logo.png';
 
   const discountPercent = product.original_price 
     ? Math.round(((product.original_price - product.price) / product.original_price) * 100) 
@@ -28,7 +29,7 @@ export default function ProductCard({ product, badge, size = 'default' }: Produc
     return (
       <div className="group flex flex-col bg-white rounded-xl overflow-hidden border border-lavender-100 shadow-[0_2px_10px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 h-full">
         {/* Image Container */}
-        <a href={`/product/${product.id}`} className="relative aspect-square bg-lavender-50/40 overflow-hidden block">
+        <Link to={`/product/${product.id}`} className="relative aspect-square bg-lavender-50/40 overflow-hidden block">
           <img 
             src={primaryImage} 
             alt={product.name} 
@@ -67,15 +68,15 @@ export default function ProductCard({ product, badge, size = 'default' }: Produc
           >
             <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${wishlisted ? 'fill-red-500 text-red-500' : 'text-plum-900/60 hover:text-red-500'}`} />
           </button>
-        </a>
+        </Link>
 
         {/* Content */}
         <div className="p-3 sm:p-3.5 flex flex-col flex-1 gap-2">
-          <a href={`/product/${product.id}`}>
+          <Link to={`/product/${product.id}`}>
             <h3 className="font-semibold text-xs sm:text-sm text-plum-950 tracking-wide line-clamp-2 hover:text-primary transition-colors leading-snug min-h-[2.4rem]">
               {product.name}
             </h3>
-          </a>
+          </Link>
 
           {/* Pricing */}
           <div className="flex items-baseline flex-wrap gap-1.5 mt-auto pt-1">
@@ -114,7 +115,7 @@ export default function ProductCard({ product, badge, size = 'default' }: Produc
 
   // DEFAULT SIZE: Strictly for Home page / carousels (Original compact styling)
   return (
-    <a href={`/product/${product.id}`} className="group flex flex-col bg-white hover:shadow-lg transition-all duration-300 h-full">
+    <Link to={`/product/${product.id}`} className="group flex flex-col bg-white hover:shadow-lg transition-all duration-300 h-full">
       {/* Image Container */}
       <div className="relative aspect-square bg-gray-50 overflow-hidden border border-gray-100">
         <img 
@@ -191,6 +192,6 @@ export default function ProductCard({ product, badge, size = 'default' }: Produc
           ADD TO CART
         </button>
       </div>
-    </a>
+    </Link>
   );
 }

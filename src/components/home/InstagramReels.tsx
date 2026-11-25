@@ -107,7 +107,7 @@ export default function InstagramReels() {
             rel="noreferrer"
             className="px-8 py-3 bg-white text-plum-950 font-bold tracking-wider rounded-full hover:bg-lavender-50 transition-colors shadow-lg shadow-white/10"
           >
-            @customized_bouquets_31
+            @customized_bouquets31
           </a>
         </div>
 
