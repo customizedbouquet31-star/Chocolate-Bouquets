@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { WishlistProvider } from './contexts/WishlistContext';
@@ -30,6 +30,22 @@ const Categories = lazy(() => import('./pages/admin/Categories'));
 const Reels = lazy(() => import('./pages/admin/Reels'));
 
 function App() {
+  // Prefetch key storefront route chunks on idle for near-zero route transition latency
+  useEffect(() => {
+    const prefetch = () => {
+      void import('./pages/Shop');
+      void import('./pages/Collection');
+      void import('./pages/ProductDetail');
+    };
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number; cancelIdleCallback?: (id: number) => void };
+    if (typeof w.requestIdleCallback === 'function') {
+      const id = w.requestIdleCallback(prefetch, { timeout: 2000 });
+      return () => w.cancelIdleCallback?.(id);
+    }
+    const timer = setTimeout(prefetch, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <AuthProvider>
       <WishlistProvider>

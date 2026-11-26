@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import ProductGrid from '../components/product/ProductGrid';
 import { supabase } from '../lib/supabase';
-import { getCached, setCached } from '../lib/cache';
+import { getCached, setCached, dedupeFetch } from '../lib/cache';
 import type { Product, Category } from '../types';
 
 
@@ -52,7 +52,9 @@ export default function Collection() {
       // 1. Categories lookup (cached for instant low latency)
       let allCategories = getCached<Category[]>('all_categories');
       if (!allCategories) {
-        const { data } = await supabase.from('categories').select('*').order('created_at', { ascending: true });
+        const { data } = await dedupeFetch('all_categories_created', async () =>
+          supabase.from('categories').select('*').order('created_at', { ascending: true })
+        );
         if (data) {
           allCategories = data;
           setCached('all_categories', data);
@@ -63,10 +65,12 @@ export default function Collection() {
       // 2. Products lookup (cached for zero-latency instant navigation)
       let allProds = getCached<Product[]>('all_products');
       if (!allProds) {
-        const { data } = await supabase
-          .from('products')
-          .select('*, product_images(image_url, is_primary)')
-          .order('created_at', { ascending: false });
+        const { data } = await dedupeFetch('all_products', async () =>
+          supabase
+            .from('products')
+            .select('*, product_images(image_url, is_primary)')
+            .order('created_at', { ascending: false })
+        );
         if (data) {
           allProds = data;
           setCached('all_products', data);

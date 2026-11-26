@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Check, ChevronDown, X } from 'lucide-react';
 import ProductGrid from '../components/product/ProductGrid';
 import { supabase } from '../lib/supabase';
-import { getCached, setCached } from '../lib/cache';
+import { getCached, setCached, dedupeFetch } from '../lib/cache';
 import type { Product, Category } from '../types';
 
 const sortOptions = [
@@ -38,11 +38,15 @@ export default function Shop() {
     async function fetchData() {
       try {
         const [productsRes, categoriesRes] = await Promise.all([
-          supabase
-            .from('products')
-            .select('*, product_images(image_url, is_primary)')
-            .order('created_at', { ascending: false }),
-          supabase.from('categories').select('*').order('name')
+          dedupeFetch('all_products', async () =>
+            supabase
+              .from('products')
+              .select('*, product_images(image_url, is_primary)')
+              .order('created_at', { ascending: false })
+          ),
+          dedupeFetch('all_categories', async () =>
+            supabase.from('categories').select('*').order('name')
+          )
         ]);
 
         if (productsRes.data) {

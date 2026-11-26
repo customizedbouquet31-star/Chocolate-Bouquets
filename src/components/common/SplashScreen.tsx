@@ -38,7 +38,7 @@ export default function SplashScreen() {
 
     setTimeout(() => {
       setIsVisible(false);
-    }, 850);
+    }, 450);
   }, []);
 
   useEffect(() => {
@@ -51,10 +51,10 @@ export default function SplashScreen() {
     // Cycle through artisanal craftsmanship steps
     stepIntervalRef.current = setInterval(() => {
       setCurrentStep((prev) => (prev + 1) % CRAFT_STEPS.length);
-    }, 1200);
+    }, 500);
 
-    // 4.5 seconds display timer for the complete experience
-    const DURATION = 4600;
+    // Snappy 1.5s brand reveal so users reach the store without delay
+    const DURATION = 1500;
     timerRef.current = setTimeout(() => {
       triggerExit();
     }, DURATION);
@@ -90,7 +90,7 @@ export default function SplashScreen() {
             y: '-100%',
             opacity: 0.95,
             transition: {
-              duration: 0.8,
+              duration: 0.45,
               ease: [0.77, 0, 0.175, 1], // Luxurious smooth curtain lift
             },
           }}
@@ -181,10 +181,11 @@ export default function SplashScreen() {
               {/* Logo Frame: Clean, Perfectly Proportionate Rounded Card */}
               <div className="relative w-44 h-44 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-[2rem] sm:rounded-[2.5rem] bg-gradient-to-b from-white/15 to-white/5 p-1.5 sm:p-2 border border-white/25 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-md flex items-center justify-center overflow-hidden">
                 <img
-                  src="/logo.png"
+                  src="/logo.webp"
                   alt="The Chocolate Bouquet"
                   className="w-full h-full object-cover rounded-[1.6rem] sm:rounded-[2.1rem] select-none pointer-events-none drop-shadow-md"
                   loading="eager"
+                  fetchPriority="high"
                   decoding="async"
                 />
               </div>

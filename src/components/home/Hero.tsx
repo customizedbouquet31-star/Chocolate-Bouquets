@@ -68,9 +68,10 @@ export default function Hero() {
           {/* Floating Logo without the restrictive card */}
           <div className="relative z-10 w-full max-w-[500px] transform-gpu">
             <img 
-              src="/logo.png" 
+              src="/logo.webp" 
               alt="The Chocolate Bouquet Logo" 
               loading="eager"
+              fetchPriority="high"
               decoding="async"
               className="w-full h-auto object-contain drop-shadow-xl rounded-3xl md:rounded-[3rem]"
             />

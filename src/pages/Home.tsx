@@ -7,7 +7,7 @@ import Reviews from '../components/home/Reviews';
 import Coupon from '../components/home/Coupon';
 import CustomizationCTA from '../components/home/CustomizationCTA';
 import { supabase } from '../lib/supabase';
-import { getCached, setCached } from '../lib/cache';
+import { getCached, setCached, dedupeFetch } from '../lib/cache';
 import type { Product } from '../types';
 
 export default function Home() {
@@ -31,10 +31,12 @@ export default function Home() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const { data, error } = await supabase
-          .from('products')
-          .select('*, product_images(image_url, is_primary)')
-          .order('created_at', { ascending: false });
+        const { data, error } = await dedupeFetch('all_products', async () =>
+          supabase
+            .from('products')
+            .select('*, product_images(image_url, is_primary)')
+            .order('created_at', { ascending: false })
+        );
 
         if (error) {
           console.error('Error fetching products:', error);
