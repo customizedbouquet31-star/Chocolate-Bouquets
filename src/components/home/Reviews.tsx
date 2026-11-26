@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 export default function Reviews() {
   return (
-    <section className="py-8 md:py-12 bg-lavender-100">
+    <section className="py-8 md:py-12 bg-lavender-100 overflow-x-clip">
       <div className="w-full px-4 md:px-12">
         <div className="text-center mb-8 flex flex-col items-center">
           <motion.h2 
@@ -14,7 +14,7 @@ export default function Reviews() {
             viewport={{ once: true, margin: "-100px" }}
             whileHover={{ scale: 1.05, y: -5 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="font-serif font-bold text-2xl md:text-3xl text-black uppercase tracking-wider mb-6 px-8 py-3 border border-lavender-200 bg-white rounded-full shadow-sm hover:shadow-xl hover:border-primary/30 cursor-default transition-shadow"
+            className="font-serif font-bold text-xl sm:text-2xl md:text-3xl text-black uppercase tracking-wider mb-6 px-5 sm:px-8 py-3 border border-lavender-200 bg-white rounded-full shadow-sm hover:shadow-xl hover:border-primary/30 cursor-default transition-shadow max-w-full"
           >
             Made With Love. Gifted With Joy.
           </motion.h2>
@@ -25,7 +25,7 @@ export default function Reviews() {
 
         <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
           {reviews.map((review) => (
-            <div key={review.id} className="bg-white p-4 md:p-8 rounded-2xl border border-lavender-100 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+            <div key={review.id} className="bg-white p-4 md:p-8 rounded-2xl border border-lavender-100 shadow-sm hover:shadow-md transition-shadow flex flex-col min-w-0">
               <div className="flex gap-0.5 md:gap-1 mb-2 md:mb-4">
                 {[...Array(5)].map((_, i) => (
                   <Star 

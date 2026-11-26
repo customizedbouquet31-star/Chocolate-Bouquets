@@ -9,9 +9,9 @@ function LayoutContent() {
   const { isCartOpen, setIsCartOpen } = useCart();
 
   return (
-    <div className="min-h-dvh flex flex-col font-sans text-plum-900">
+    <div className="min-h-dvh w-full max-w-full overflow-x-clip flex flex-col font-sans text-plum-900">
       <Header onCartClick={() => setIsCartOpen(true)} />
-      <main className="flex-1 w-full">
+      <main className="flex-1 w-full min-w-0">
         <Outlet />
       </main>
       <Footer />

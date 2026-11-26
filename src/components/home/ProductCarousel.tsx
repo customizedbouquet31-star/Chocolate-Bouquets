@@ -26,7 +26,7 @@ export default function ProductCarousel({
   if (title.toUpperCase().includes('NEW LAUNCHES')) badge = 'NEW LAUNCH';
 
   return (
-    <section className={`py-4 md:py-6 ${bgColor}`}>
+    <section className={`py-4 md:py-6 ${bgColor} overflow-x-clip`}>
       <div className="w-full px-6 md:px-12 mb-2 flex flex-col items-center text-center">
         <motion.h2 
           initial={{ opacity: 0, y: 20 }}

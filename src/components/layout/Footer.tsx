@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <footer className="bg-lavender-100 pt-8 pb-4 px-6 md:px-12 mt-8 text-plum-900">
-      <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-12 lg:gap-8">
+    <footer className="bg-lavender-100 pt-8 pb-4 px-6 md:px-12 mt-8 text-plum-900 overflow-x-clip">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8 md:gap-12 lg:gap-8">
         
         {/* About */}
-        <div id="about" className="flex flex-col gap-4 pt-4 scroll-mt-24">
+        <div id="about" className="flex flex-col gap-4 pt-4 scroll-mt-24 min-w-0">
           <h3 className="font-serif font-bold text-lg tracking-wide mb-2">ABOUT</h3>
           <p className="text-sm text-plum-900/80 font-medium">The Chocolate Bouquet X Hamper</p>
           <p className="text-sm text-plum-900/80 font-medium">Customized Bouquets 31</p>
@@ -16,15 +16,15 @@ export default function Footer() {
         </div>
 
         {/* Contact */}
-        <div id="contact" className="flex flex-col gap-4 pt-4 scroll-mt-24">
+        <div id="contact" className="flex flex-col gap-4 pt-4 scroll-mt-24 min-w-0">
           <h3 className="font-serif font-bold text-lg tracking-wide mb-2">CONTACT</h3>
-          <a href="https://wa.me/919315274580" target="_blank" rel="noreferrer" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium flex items-center gap-2">
+          <a href="https://wa.me/919315274580" target="_blank" rel="noreferrer" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium break-words">
             WhatsApp: +91 93152 74580
           </a>
-          <a href="https://www.instagram.com/customized_bouquets31?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw==" target="_blank" rel="noreferrer" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium flex items-center gap-2">
+          <a href="https://www.instagram.com/customized_bouquets31?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw==" target="_blank" rel="noreferrer" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium break-words">
             Instagram: @customized_bouquets31
           </a>
-          <a href="mailto:support@thechocolatebouquets.in" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium flex items-center gap-2">
+          <a href="mailto:support@thechocolatebouquets.in" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium break-words">
             Email: support@thechocolatebouquets.in
           </a>
         </div>
