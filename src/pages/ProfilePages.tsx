@@ -7,6 +7,13 @@ import { supabase } from '../lib/supabase';
 import ProductCard from '../components/product/ProductCard';
 import type { Address, SavedCard } from '../types';
 
+function generateId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
 interface OrderRecord {
   id: string;
   customer_name: string;
@@ -159,7 +166,7 @@ export function ProfileAddresses() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newAddress = { id: crypto.randomUUID(), ...formData };
+    const newAddress = { id: generateId(), ...formData };
     const newAddresses = [...addresses, newAddress];
     await updateUserMetadata({ addresses: newAddresses });
     setIsAdding(false);
@@ -238,7 +245,7 @@ export function ProfileCards() {
     e.preventDefault();
     // Simulate masking
     const masked = '**** **** **** ' + formData.cardNumber.slice(-4);
-    const newCard = { id: crypto.randomUUID(), nameOnCard: formData.nameOnCard, cardNumber: masked, expiry: formData.expiry };
+    const newCard = { id: generateId(), nameOnCard: formData.nameOnCard, cardNumber: masked, expiry: formData.expiry };
     const newCards = [...cards, newCard];
     await updateUserMetadata({ cards: newCards });
     setIsAdding(false);

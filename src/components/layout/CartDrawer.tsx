@@ -57,6 +57,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
     setIsSubmitting(true);
 
+    // Open blank window synchronously on user gesture so iOS Safari / mobile browsers do not block popup after await
+    const waWindow = window.open('about:blank', '_blank', 'noopener,noreferrer');
+
     const addr = addresses.find(a => a.id === selectedAddress);
     const addressStr = addr 
       ? `${addr.name}, ${addr.street}, ${addr.city}, ${addr.state} - ${addr.pincode} (Phone: ${addr.phone})`
@@ -109,8 +112,16 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     const refNote = orderRef ? `*Order Reference:* ${orderRef}%0A` : '';
 
     const waMsg = `Hello! I would like to place an order from The Chocolate Bouquet:%0A%0A${refNote}*Order Items:*%0A${encodeURIComponent(itemsSummary)}%0A${encodeURIComponent(couponNote)}%0A*Total Payable:* Rs. ${finalPrice}%0A%0A*Delivery Address:*%0A${encodeURIComponent(addressStr)}%0A%0APlease confirm my order and share payment details!`;
+    const waUrl = `https://wa.me/919315274580?text=${waMsg}`;
 
-    window.open(`https://wa.me/919315274580?text=${waMsg}`, '_blank');
+    if (waWindow && !waWindow.closed) {
+      waWindow.location.replace(waUrl);
+    } else {
+      const opened = window.open(waUrl, '_blank', 'noopener,noreferrer');
+      if (!opened) {
+        window.location.assign(waUrl);
+      }
+    }
     clearCart();
     handleClose();
   };
@@ -124,8 +135,12 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     const couponNote = appliedCode ? `\nApplied Coupon: ${appliedCode} (-Rs. ${discountAmount})` : '';
 
     const waMsg = `Hello! I would like to order the following items from The Chocolate Bouquet:%0A%0A*Items:*%0A${encodeURIComponent(itemsSummary)}%0A${encodeURIComponent(couponNote)}%0A*Total:* Rs. ${finalPrice}%0A%0APlease let me know the delivery timeframe and payment details!`;
+    const waUrl = `https://wa.me/919315274580?text=${waMsg}`;
 
-    window.open(`https://wa.me/919315274580?text=${waMsg}`, '_blank');
+    const opened = window.open(waUrl, '_blank', 'noopener,noreferrer');
+    if (!opened) {
+      window.location.assign(waUrl);
+    }
   };
 
   const handleClose = () => {
@@ -152,7 +167,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '100%', opacity: 0.5 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="relative w-full max-w-md bg-white shadow-2xl h-full flex flex-col overflow-hidden"
+            className="relative w-full max-w-md bg-white shadow-2xl h-dvh flex flex-col overflow-hidden"
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}
@@ -380,7 +395,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 md:p-8 bg-white border-t border-lavender-50 shadow-[0_-10px_30px_rgb(0,0,0,0.03)] relative z-10 flex-shrink-0">
+                <div className="p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] md:p-8 md:pb-8 bg-white border-t border-lavender-50 shadow-[0_-10px_30px_rgb(0,0,0,0.03)] relative z-10 flex-shrink-0">
                   <div className="flex flex-col gap-2 mb-4">
                     <div className="flex items-center justify-between">
                       <span className="text-plum-900/60 font-bold uppercase tracking-widest text-xs">Subtotal</span>

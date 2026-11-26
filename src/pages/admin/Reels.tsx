@@ -112,12 +112,13 @@ export default function Reels() {
               <div className="aspect-[9/16] relative bg-lavender-50">
                 {(reel.instagram_url.includes('supabase.co') || reel.instagram_url.endsWith('.mp4')) ? (
                   <video 
-                    src={reel.instagram_url}
+                    src={reel.instagram_url.includes('#') ? reel.instagram_url : `${reel.instagram_url}#t=0.001`}
                     preload="metadata"
+                    playsInline
                     className="w-full h-full object-cover"
                   ></video>
                 ) : (
-                  <img src={reel.thumbnail_url || 'https://via.placeholder.com/300x500?text=Video+Reel'} alt="Reel thumbnail" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x500?text=Video+Reel'; }} />
+                  <img src={reel.thumbnail_url || '/logo.png'} alt="Reel thumbnail" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = '/logo.png'; }} />
                 )}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <button onClick={() => handleDelete(reel.id)} className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors">

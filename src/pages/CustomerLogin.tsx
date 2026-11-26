@@ -18,7 +18,7 @@ export default function CustomerLogin() {
   }, [user, navigate, location]);
 
   return (
-    <div className="min-h-screen bg-lavender-50 flex flex-col justify-center items-center p-6 relative overflow-hidden">
+    <div className="min-h-dvh bg-lavender-50 flex flex-col justify-center items-center p-6 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
       <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-lavender-200/50 rounded-full blur-3xl" />

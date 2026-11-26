@@ -94,7 +94,7 @@ export default function SplashScreen() {
               ease: [0.77, 0, 0.175, 1], // Luxurious smooth curtain lift
             },
           }}
-          className="fixed inset-0 z-[9999] flex flex-col justify-between items-center py-6 sm:py-8 px-6 select-none overflow-hidden bg-gradient-to-br from-[#12051b] via-[#210c2e] to-[#0e0416]"
+          className="fixed inset-0 h-dvh z-[9999] flex flex-col justify-between items-center pt-[calc(1.5rem+env(safe-area-inset-top))] pb-[calc(1.5rem+env(safe-area-inset-bottom))] sm:py-8 px-6 select-none overflow-hidden bg-gradient-to-br from-[#12051b] via-[#210c2e] to-[#0e0416]"
         >
           {/* Subtle Ambient Glow Layers behind content */}
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-gradient-to-tr from-primary/25 via-lavender-400/20 to-rose-400/15 rounded-full blur-3xl pointer-events-none transform-gpu" />

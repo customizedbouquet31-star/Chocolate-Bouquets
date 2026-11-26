@@ -71,13 +71,18 @@
     color: var(--foreground);
   }
 
-  /* GPU layer optimization for smooth 60/120fps scrolling */
-  img {
-    content-visibility: auto;
-  }
-
+  /* Smooth tap and scrolling across iOS/Android */
   * {
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevent iOS Safari automatic viewport zoom when focusing inputs < 16px */
+  @media screen and (max-width: 767px) {
+    input:not([type="checkbox"]):not([type="radio"]):not(.text-3xl):not(.text-2xl):not(.text-xl),
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
   }
 
   @keyframes shimmer {
@@ -113,6 +118,11 @@
 body.splash-active {
   overflow: hidden !important;
   touch-action: none;
+  overscroll-behavior: none;
+}
+
+html:has(body.splash-active) {
+  overflow: hidden !important;
 }
 
 #root {

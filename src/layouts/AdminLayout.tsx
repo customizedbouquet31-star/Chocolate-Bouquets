@@ -34,9 +34,13 @@ export default function AdminLayout() {
       if (!session) navigate('/admin');
     });
 
-    // Request notification permission for Android/Desktop PWA
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
+    // Request notification permission safely (not supported on iOS non-PWA Safari)
+    try {
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission().catch(() => {});
+      }
+    } catch {
+      // Ignore on unsupported browsers
     }
 
     // Supabase Realtime Listener for New Orders
@@ -45,16 +49,30 @@ export default function AdminLayout() {
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'orders' },
-        () => {
+        async () => {
+          const title = 'New Order Received! 🛍️';
+          const notifOptions: NotificationOptions = {
+            body: 'A new order has just been placed. Check your dashboard!',
+            icon: '/logo.png',
+            badge: '/logo.png',
+          };
+
           if ('Notification' in window && Notification.permission === 'granted') {
-            const notifOptions: NotificationOptions = {
-              body: 'A new order has just been placed. Check your dashboard!',
-              icon: '/logo.png',
-              badge: '/logo.png',
-            };
-            new Notification('New Order Received! 🛍️', notifOptions);
+            try {
+              // Android Chrome requires ServiceWorkerRegistration.showNotification()
+              if ('serviceWorker' in navigator) {
+                const reg = await navigator.serviceWorker.ready;
+                if (reg && 'showNotification' in reg) {
+                  await reg.showNotification(title, notifOptions);
+                  return;
+                }
+              }
+              new Notification(title, notifOptions);
+            } catch {
+              alert(title);
+            }
           } else {
-            alert('New Order Received! 🛍️');
+            alert(title);
           }
         }
       )
@@ -72,7 +90,7 @@ export default function AdminLayout() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-lavender-50">
+      <div className="min-h-dvh flex items-center justify-center bg-lavender-50">
         <div className="w-10 h-10 border-4 border-lavender-200 border-t-primary rounded-full animate-spin"></div>
       </div>
     );
@@ -89,7 +107,7 @@ export default function AdminLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-lavender-50 flex">
+    <div className="min-h-dvh bg-lavender-50 flex">
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div 
@@ -110,7 +128,7 @@ export default function AdminLayout() {
           </button>
         </div>
 
-        <nav className="p-4 space-y-1 flex flex-col h-[calc(100vh-4rem)]">
+        <nav className="p-4 space-y-1 flex flex-col h-[calc(100dvh-4rem)]">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;

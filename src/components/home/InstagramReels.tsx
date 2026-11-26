@@ -25,7 +25,12 @@ function VideoPlayer({ reel, playingId, setPlayingId }: { reel: Reel, playingId:
         setIsPlaying(false);
         if (playingId === reel.id) setPlayingId(null);
       } else {
-        videoRef.current.play();
+        const playPromise = videoRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            setIsPlaying(false);
+          });
+        }
         setIsPlaying(true);
         setPlayingId(reel.id);
       }
@@ -40,11 +45,16 @@ function VideoPlayer({ reel, playingId, setPlayingId }: { reel: Reel, playingId:
     }
   };
 
+  const videoSrc = reel.instagram_url.includes('#')
+    ? reel.instagram_url
+    : `${reel.instagram_url}#t=0.001`;
+
   return (
     <div className="relative w-full h-full cursor-pointer group" onClick={togglePlay}>
       <video 
         ref={videoRef}
-        src={reel.instagram_url}
+        src={videoSrc}
+        poster={reel.thumbnail_url || undefined}
         preload="metadata"
         className="w-full h-full object-cover"
         onEnded={handleEnded}
