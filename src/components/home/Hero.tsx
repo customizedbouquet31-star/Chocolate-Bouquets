@@ -30,7 +30,7 @@ export default function Hero() {
           </h1>
 
           <p className="text-lg md:text-xl text-plum-900/70 max-w-lg mx-auto md:mx-0 leading-relaxed text-balance">
-            Thoughtful bouquets and hampers made around your person, your occasion and your story.
+            Handcrafted chocolate bouquets, flower bouquets, and bespoke gift hampers made around your person, your occasion, and your story.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center md:justify-start -mt-2 md:mt-4">

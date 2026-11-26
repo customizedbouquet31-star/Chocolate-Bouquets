@@ -2,8 +2,15 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, MessageCircle, Phone, Send } from 'lucide-react';
 import { InstagramIcon } from '../components/icons/InstagramIcon';
+import { useSEO } from '../hooks/useSEO';
 
 export default function Contact() {
+  useSEO({
+    title: 'Contact Us | Custom Bouquets & Orders | The Chocolate Bouquet',
+    description:
+      'Contact The Chocolate Bouquet via WhatsApp (+91 93152 74580), phone (+91 98217 67832), or email for custom chocolate bouquets, flower bouquets, and hampers.',
+    canonicalPath: '/contact',
+  });
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');

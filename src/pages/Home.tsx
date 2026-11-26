@@ -8,9 +8,16 @@ import Coupon from '../components/home/Coupon';
 import CustomizationCTA from '../components/home/CustomizationCTA';
 import { supabase } from '../lib/supabase';
 import { getCached, setCached, dedupeFetch } from '../lib/cache';
+import { useSEO } from '../hooks/useSEO';
 import type { Product } from '../types';
 
 export default function Home() {
+  useSEO({
+    title: 'The Chocolate Bouquet | Custom Chocolate Bouquets, Flower Bouquets & Luxury Hampers',
+    description:
+      'Shop handcrafted chocolate bouquets, fresh & forever flower bouquets, polaroid photo bouquets, and customized luxury gift hampers at The Chocolate Bouquet. Pan-India delivery.',
+    canonicalPath: '/',
+  });
   const [bestSellers, setBestSellers] = useState<Product[]>(() => {
     const cached = getCached<Product[]>('all_products');
     if (cached && cached.length > 0) {

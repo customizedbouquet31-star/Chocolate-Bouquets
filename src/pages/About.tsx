@@ -1,8 +1,15 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
+import { useSEO } from '../hooks/useSEO';
 
 export default function About() {
+  useSEO({
+    title: 'About Us | The Chocolate Bouquet X Hamper',
+    description:
+      'Learn the story behind The Chocolate Bouquet — crafting bespoke chocolate bouquets, flower bouquets, and luxury gift hampers across India.',
+    canonicalPath: '/about',
+  });
   const stagger: Variants = {
     animate: {
       transition: {

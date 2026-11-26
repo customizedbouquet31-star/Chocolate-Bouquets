@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Heart, Minus, Plus, MessageCircle, MapPin, Star } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { getCached } from '../lib/cache';
+import { useSEO } from '../hooks/useSEO';
 import type { Product, ProductImage } from '../types';
 
 export default function ProductDetail() {
@@ -32,6 +33,41 @@ export default function ProductDetail() {
   });
   const [pincode, setPincode] = useState('');
   const [deliveryStatus, setDeliveryStatus] = useState<string | null>(null);
+
+  const productJsonLd = useMemo(() => {
+    if (!product) return null;
+    const imgUrl =
+      product.product_images?.find((i: ProductImage) => i.is_primary)?.image_url ||
+      product.product_images?.[0]?.image_url ||
+      '/logo.png';
+    const fullImg = imgUrl.startsWith('http') ? imgUrl : `https://thechocolatebouquets.in${imgUrl}`;
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: product.name,
+      description: product.description || `Handcrafted ${product.name} by The Chocolate Bouquet.`,
+      image: fullImg,
+      brand: {
+        '@type': 'Brand',
+        name: 'The Chocolate Bouquet',
+      },
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'INR',
+        price: product.price,
+        availability: 'https://schema.org/InStock',
+        url: `https://thechocolatebouquets.in/product/${product.id}`,
+      },
+    };
+  }, [product]);
+
+  useSEO({
+    title: product ? `${product.name} | The Chocolate Bouquet` : 'Handcrafted Bouquet | The Chocolate Bouquet',
+    description: product?.description || 'Custom handcrafted chocolate bouquets, flower bouquets, and luxury gift hampers with Pan-India delivery.',
+    keywords: product ? `${product.name}, the chocolate bouquet, chocolate bouquet, bouquets, custom gift hamper` : undefined,
+    canonicalPath: productId ? `/product/${productId}` : '/shop',
+    jsonLd: productJsonLd,
+  });
   
   useEffect(() => {
     async function fetchProduct() {

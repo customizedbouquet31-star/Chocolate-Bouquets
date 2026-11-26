@@ -5,6 +5,7 @@ import { Check, ChevronDown, X } from 'lucide-react';
 import ProductGrid from '../components/product/ProductGrid';
 import { supabase } from '../lib/supabase';
 import { getCached, setCached, dedupeFetch } from '../lib/cache';
+import { useSEO } from '../hooks/useSEO';
 import type { Product, Category } from '../types';
 
 const sortOptions = [
@@ -15,6 +16,14 @@ const sortOptions = [
 ];
 
 export default function Shop() {
+  useSEO({
+    title: 'Shop All Bouquets & Hampers | The Chocolate Bouquet',
+    description:
+      'Explore all custom chocolate bouquets, flower bouquets, polaroid photo bouquets, men’s & women’s hampers, and festive gifts crafted by The Chocolate Bouquet.',
+    keywords:
+      'shop chocolate bouquets, buy bouquets online, flower bouquets, custom gift hampers, polaroid bouquets, the chocolate bouquet shop',
+    canonicalPath: '/shop',
+  });
   const [sort, setSort] = useState('featured');
   const [products, setProducts] = useState<Product[]>(() => {
     return getCached<Product[]>('all_products') || [];

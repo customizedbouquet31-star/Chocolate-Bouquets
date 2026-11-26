@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import ProductGrid from '../components/product/ProductGrid';
 import { supabase } from '../lib/supabase';
 import { getCached, setCached, dedupeFetch } from '../lib/cache';
+import { useSEO } from '../hooks/useSEO';
 import type { Product, Category } from '../types';
 
 
@@ -40,6 +41,14 @@ export default function Collection() {
 
   const isChocolateBouquets = categoryId === 'chocolate-bouquets';
   const isFlowerBouquets = categoryId === 'flower-bouquets';
+
+  const collectionTitle = category?.name || (categoryId ? categoryId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Collection');
+  useSEO({
+    title: `${collectionTitle} | The Chocolate Bouquet`,
+    description: `Shop handcrafted ${collectionTitle.toLowerCase()}, custom chocolate bouquets, flower bouquets, and luxury gift hampers with Pan-India delivery.`,
+    keywords: `${collectionTitle.toLowerCase()}, the chocolate bouquet, chocolate bouquets, bouquets, custom bouquets, gift hampers india`,
+    canonicalPath: categoryId ? `/collection/${categoryId}` : '/shop',
+  });
 
   const sortOptions = [
     { id: 'featured', label: 'Featured' },
