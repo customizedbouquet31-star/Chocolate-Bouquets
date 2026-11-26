@@ -24,8 +24,8 @@ export default function Footer() {
           <a href="https://www.instagram.com/customized_bouquets31?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw==" target="_blank" rel="noreferrer" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium break-words">
             Instagram: @customized_bouquets31
           </a>
-          <a href="mailto:support@thechocolatebouquets.in" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium break-words">
-            Email: support@thechocolatebouquets.in
+          <a href="mailto:customizedbouquets31@gmail.com" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium break-words">
+            Email: customizedbouquets31@gmail.com
           </a>
         </div>
 
