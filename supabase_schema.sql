@@ -5,6 +5,7 @@ CREATE TABLE public.categories (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     name text NOT NULL,
     slug text UNIQUE NOT NULL,
+    image_url text,
     created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

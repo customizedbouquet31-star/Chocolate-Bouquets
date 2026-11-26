@@ -18,6 +18,18 @@ const DEFAULT_CATEGORIES: Category[] = [
   { id: '3faad705-d4a5-4c0e-955e-26a0ada9bf03', name: 'Cards & Letters', slug: 'cards-letters', image_url: '/categories/cards.webp', created_at: '' },
 ];
 
+function getDefaultCategoryImage(slug: string): string {
+  if (slug.includes('flower')) return '/categories/flower.webp';
+  if (slug.includes('chocolate')) return '/categories/chocolate.webp';
+  if (slug.includes('women')) return '/categories/womens.webp';
+  if (slug.includes('men')) return '/categories/mens.webp';
+  if (slug.includes('festiv')) return '/categories/festival.webp';
+  if (slug.includes('theme')) return '/categories/theme.webp';
+  if (slug.includes('polaroid')) return '/categories/polaroid.webp';
+  if (slug.includes('card')) return '/categories/cards.webp';
+  return '/logo.webp';
+}
+
 export default function CategoryScroller() {
   const [categories, setCategories] = useState<Category[]>(() => {
     return getCached<Category[]>('mapped_categories') || DEFAULT_CATEGORIES;
@@ -29,21 +41,10 @@ export default function CategoryScroller() {
       try {
         const { data } = await supabase.from('categories').select('*').order('created_at', { ascending: true });
         if (data && data.length > 0) {
-          // Map optimized WebP category photos
-          const mappedData = data.map((cat: Category) => {
-            let customImg: string;
-            if (cat.slug.includes('flower')) customImg = '/categories/flower.webp';
-            else if (cat.slug.includes('chocolate')) customImg = '/categories/chocolate.webp';
-            else if (cat.slug.includes('women')) customImg = '/categories/womens.webp';
-            else if (cat.slug.includes('men')) customImg = '/categories/mens.webp';
-            else if (cat.slug.includes('festiv')) customImg = '/categories/festival.webp';
-            else if (cat.slug.includes('theme')) customImg = '/categories/theme.webp';
-            else if (cat.slug.includes('polaroid')) customImg = '/categories/polaroid.webp';
-            else if (cat.slug.includes('card')) customImg = '/categories/cards.webp';
-            else customImg = '/logo.webp';
-            
-            return { ...cat, image_url: customImg };
-          });
+          const mappedData = data.map((cat: Category) => ({
+            ...cat,
+            image_url: cat.image_url || getDefaultCategoryImage(cat.slug),
+          }));
           setCached('mapped_categories', mappedData);
           setCategories(mappedData);
         } else {
