@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, MessageCircle, Send } from 'lucide-react';
+import { Mail, MessageCircle, Phone, Send } from 'lucide-react';
 import { InstagramIcon } from '../components/icons/InstagramIcon';
 
 export default function Contact() {
@@ -31,6 +31,16 @@ export default function Contact() {
       color: 'text-emerald-400',
       bgHover: 'group-hover:bg-emerald-400/10',
       borderHover: 'group-hover:border-emerald-400/30'
+    },
+    {
+      id: 'phone',
+      icon: Phone,
+      title: 'Mobile / Call',
+      value: '+91 98217 67832',
+      link: 'tel:+919821767832',
+      color: 'text-amber-400',
+      bgHover: 'group-hover:bg-amber-400/10',
+      borderHover: 'group-hover:border-amber-400/30'
     },
     {
       id: 'instagram',

@@ -21,6 +21,9 @@ export default function Footer() {
           <a href="https://wa.me/919315274580" target="_blank" rel="noreferrer" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium break-words">
             WhatsApp: +91 93152 74580
           </a>
+          <a href="tel:+919821767832" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium break-words">
+            Phone: +91 98217 67832
+          </a>
           <a href="https://www.instagram.com/customized_bouquets31?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw==" target="_blank" rel="noreferrer" className="text-sm text-plum-900/80 hover:text-primary transition-colors font-medium break-words">
             Instagram: @customized_bouquets31
           </a>
